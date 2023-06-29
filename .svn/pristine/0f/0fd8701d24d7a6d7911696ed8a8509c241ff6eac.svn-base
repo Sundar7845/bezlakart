@@ -1,0 +1,82 @@
+document.addEventListener("DOMContentLoaded", function () {
+    $("#tblShippingcharge").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "/stateshippingchargedata",
+        fnRowCallback: serialNoCount,
+        columns: [
+            { data: "id", orderable: false },
+            {
+                data: "state_name",
+            },
+            {
+                data: "shipping_charge",
+            },
+            {
+                data: "cod_charge",
+            },
+            { data: "action", orderable: false },
+        ],
+    });
+});
+
+function doEdit(id) {
+    $("#hdshippingId").val(id);
+    $("#ddlState").focus();
+    $("#btnSave").text("Update");
+    $("#heading").text("Update State Shipping Charge");
+    getShippingChargeById(id);
+}
+
+function getShippingChargeById(id) {
+    $.ajax({
+        type: "GET",
+        url: "/getshippingcharge/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#ddlState")
+                .val(data.stateshippingcharge.state_id)
+                .trigger("change");
+            $("#txtShippingCharge").val(
+                data.stateshippingcharge.shipping_charge
+            );
+            $("#txtCodCharge").val(
+                data.stateshippingcharge.cod_charge
+            );
+        },
+    });
+}
+
+// jquery Validation
+$(function () {
+    $("form[name='shippingcharge']").validate({
+        rules: {
+            ddlState: "required",
+            txtShippingCharge: "required",
+            txtCodCharge: "required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});
+
+function cancel() {
+    $("#hdshippingId").val("");
+    $("#ddlState").val("").trigger("change");
+    $("#txtShippingCharge").val("");
+    $("#txtCodCharge").val("");
+    $("#btnSave").text("Save");
+    $("#heading").text("State Shipping Charge");
+}

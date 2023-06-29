@@ -1,0 +1,105 @@
+@extends('frontend.layouts.frontend_master')
+@section('content')
+<main class="main">
+    <!-- Start of Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title mb-0">Contact Us</h1>
+        </div>
+    </div>
+    <!-- End of Page Header -->
+
+    <!-- Start of Breadcrumb -->
+    <nav class="breadcrumb-nav mb-10 pb-1">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="demo1.html">Home</a></li>
+                <li>Contact Us</li>
+            </ul>
+        </div>
+    </nav>
+    <!-- End of Breadcrumb -->
+
+    <!-- Start of PageContent -->
+    <div class="page-content contact-us">
+        <div class="container">
+            <section class="content-title-section mb-10">
+                <h3 class="title title-center mb-3">Contact
+                    Information
+                </h3>
+                <p class="text-center">Lorem ipsum dolor sit amet,
+                    consectetur
+                    adipiscing elit, sed do eiusmod tempor incididunt ut</p>
+            </section>
+            <!-- End of Contact Title Section -->
+
+            <section class="contact-information-section mb-10">
+                <div class=" swiper-container swiper-theme " data-swiper-options="{
+                    'spaceBetween': 20,
+                    'slidesPerView': 1,
+                    'breakpoints': {
+                        '480': {
+                            'slidesPerView': 2
+                        },
+                        '768': {
+                            'slidesPerView': 3
+                        },
+                        '992': {
+                            'slidesPerView': 4
+                        }
+                    }
+                }">
+                    <div class="swiper-wrapper row cols-xl-4 cols-md-3 cols-sm-2 cols-1">
+                        <div class="swiper-slide icon-box text-center icon-box-primary">
+                            <span class="icon-box-icon icon-email">
+                                <i class="w-icon-envelop-closed"></i>
+                            </span>
+                            <div class="icon-box-content">
+                                <h4 class="icon-box-title">E-mail Address</h4>
+                                <p><a href="https://portotheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2845494144684d50494558444d064b4745">[email&#160;protected]</a></p>
+                            </div>
+                        </div>
+                        <div class="swiper-slide icon-box text-center icon-box-primary">
+                            <span class="icon-box-icon icon-headphone">
+                                <i class="w-icon-headphone"></i>
+                            </span>
+                            <div class="icon-box-content">
+                                <h4 class="icon-box-title">Phone Number</h4>
+                                <p>(123) 456-7890 / (123) 456-9870</p>
+                            </div>
+                        </div>
+                        <div class="swiper-slide icon-box text-center icon-box-primary">
+                            <span class="icon-box-icon icon-map-marker">
+                                <i class="w-icon-map-marker"></i>
+                            </span>
+                            <div class="icon-box-content">
+                                <h4 class="icon-box-title">Address</h4>
+                                <p>Lawrence, NY 11345, USA</p>
+                            </div>
+                        </div>
+                        <div class="swiper-slide icon-box text-center icon-box-primary">
+                            <span class="icon-box-icon icon-fax">
+                                <i class="w-icon-fax"></i>
+                            </span>
+                            <div class="icon-box-content">
+                                <h4 class="icon-box-title">Fax</h4>
+                                <p>1-800-570-7777</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- End of Contact Information section -->
+
+            <hr class="divider mb-10 pb-1">
+
+            <!-- End of Contact Section -->
+        </div>
+
+        <!-- Google Maps - Go to the bottom of the page to change settings and map location. -->
+        <div class="google-map contact-google-map" id="googlemaps"></div>
+        <!-- End Map Section -->
+    </div>
+    <!-- End of PageContent -->
+</main>
+@endsection

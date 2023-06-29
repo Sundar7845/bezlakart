@@ -1,0 +1,145 @@
+document.addEventListener("DOMContentLoaded", function () {
+    $("#tblMainCategory").DataTable({
+        processing: true,
+        serverSide: true,
+        order: [[0, "ASC"]],
+        ajax: "maincategorydata",
+        fnRowCallback: serialNoCount,
+        columns: [
+            { data: "id", orderable: false },
+            {
+                data: "main_category_image",
+                render: function (data, type, row) {
+                    return (
+                        '<img src="' +
+                        row.main_category_image +
+                        '" class="avatar" width="50" height="50"/>'
+                    );
+                },
+            },
+            {
+                data: "main_category_icon",
+                render: function (data, type, row) {
+                    return (
+                        '<i class="' +
+                        row.main_category_icon +
+                        '" style="font-size:30px;"/></i>'
+                    );
+                },
+            },
+            { data: "main_category_name" },
+            {
+                data: "is_active",
+                render: function (data, type, row) {
+                    return `<div class="form-check form-switch form-switch-md form-switch-primary mb-3" 
+                    style="position: relative; margin-left: 7px;">
+                    <input class="form-check-input" type="checkbox" role="switch" id="chkMainCategory${
+                        row.id
+                    }" onclick="doStatus(${row.id});" ${
+                        data == 1 ? "checked" : ""
+                    }>
+                </div>`;
+                },
+            },
+            { data: "action", orderable: false },
+        ],
+    });
+});
+
+const inputFiles = document.querySelectorAll('input[type="file"]');
+const previewImages = document.querySelectorAll('img[id^="previewImage"]');
+
+inputFiles.forEach(function (inputFile, index) {
+    inputFile.addEventListener("change", function () {
+        const file = this.files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener("load", function () {
+            previewImages[index].setAttribute("src", this.result);
+        });
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    });
+});
+
+function cancel() {
+    $("#txtMainCategoryName").val("");
+    $("#textMainCategoryIcon").val("");
+    $("#fileMainCategoryImage").val("");
+    $("#previewImage").attr(
+        "src",
+        "http://localhost:8000/images/users/avatar-1.jpg"
+    );
+    $("#btnSave").text("Save");
+    $("#heading").text("System Module");
+}
+
+// jquery Validation
+$(function () {
+    $("form[name='mainCategory']").validate({
+        rules: {
+            txtMainCategoryName: "required",
+            textMainCategoryIcon: "required",
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.parents(".form-group"));
+            } else {
+                // This is the default behavior
+                // error.insertAfter(element);
+                if (element.siblings(".error").html() == undefined) {
+                    error.appendTo(element.parent().next(".error"));
+                } else {
+                    error.appendTo(element.siblings(".error"));
+                }
+            }
+        },
+    });
+});
+
+function doEdit(id) {
+    $("#hdMainCategoryId").val(id);
+    $("#txtMainCategoryName").focus();
+    $("#btnSave").text("Update");
+    $("#heading").text("Update System Module");
+    getMainCategoryById(id);
+}
+
+function getMainCategoryById(id) {
+    $.ajax({
+        type: "GET",
+        url: "getmaincategory/" + id,
+        dataType: "json",
+        success: function (data) {
+            $("#txtMainCategoryName").val(data.maincategory.main_category_name);
+            $("#textMainCategoryIcon").val(
+                data.maincategory.main_category_icon
+            );
+            $("#hdMainCategoryImage").val(
+                data.maincategory.main_category_image
+            );
+            $("#previewImage").attr(
+                "src",
+                data.maincategory.main_category_image
+            );
+            $("#fileMainCategoryImage").removeAttr("required");
+        },
+    });
+}
+
+function showDelete(id) {
+    confirmDelete(id, "deletemaincategory/", "tblMainCategory");
+}
+
+function doStatus(id) {
+    var status = $("#chkMainCategory" + id).is(":checked");
+    confirmStatusChange(
+        id,
+        "maincategory/",
+        "tblMainCategory",
+        status == true ? 1 : 0,
+        "chkMainCategory"
+    );
+}

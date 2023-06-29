@@ -1,0 +1,49 @@
+@extends('backend.layouts.admin_master')
+@section('content')
+@section('title')
+    Business Setup | Bezlakart
+@endsection
+<div class="row">
+    <div class="col-12">
+        <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+            <h5 id="heading">Business Setup</h5>
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="" method="POST"
+                            enctype="multipart/form-data" name="shippingcharge">
+                            @csrf
+                            <input type="hidden" name="hdbusinesssetupId" id="hdbusinesssetupId" value="">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5><i class="ri-settings-5-line"></i>Maintenance Mode</h5>
+                                </div>
+                                <div class="col-6">
+                                    <label class="switch ml-3 float-right">
+                                        <input type="checkbox" class="status" onclick="maintenance_mode()">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="mt-4 mb-3">
+                                        <button type="submit" id="btnSave"
+                                            class="btn btn-success btn-flat">Save</button>
+                                        <button type="button" class="btn btn-danger" id="btnCancel"
+                                            onclick="cancel();">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@section('footer')
+<script src="{{ asset('js/backend/masters/stateshippingcharge.js') }}"></script>
+@endsection

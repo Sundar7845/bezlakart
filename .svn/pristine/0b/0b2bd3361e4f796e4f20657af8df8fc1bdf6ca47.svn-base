@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Settings;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class MailConfigController extends Controller
+{
+    public function mailConfig(){
+
+        return view('backend.admin.settings.mail_config.mail_config');
+    }
+}

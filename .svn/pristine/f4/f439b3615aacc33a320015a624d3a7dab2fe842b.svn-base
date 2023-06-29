@@ -1,0 +1,214 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+//Store Auth
+Route::get('/storeregister', [App\Http\Controllers\Backend\Login\StoreRegisterController::class, 'storeRegister'])->name('storeregister');
+Route::post('/storeregister/store', [App\Http\Controllers\Backend\Login\StoreRegisterController::class, 'storeRegisterStore'])->name('storeregisterstore');
+
+//Admin Login View
+Route::get('admin/login', [App\Http\Controllers\Backend\Login\LoginController::class, 'adminLoginForm'])->name('login.view');
+
+//Admin Login
+Route::post('/store', [App\Http\Controllers\Backend\Login\LoginController::class, 'adminLogin'])->name('admin.login');
+
+Route::group(['middleware' => ['admin', 'prevent-back-history']], function () {
+
+    //Admin Dashboard
+    Route::get('dashboard', [App\Http\Controllers\Backend\Dashboard\DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
+
+    //Admin Logout
+    Route::get('admin/logout', [App\Http\Controllers\Backend\Login\LoginController::class, 'adminLogout'])->name('admin.logout');
+
+    //Module 
+    Route::get('module', [\App\Http\Controllers\Backend\Module\ModuleController::class, 'module'])->name('module');
+    Route::post('modulecreate', [\App\Http\Controllers\Backend\Module\ModuleController::class, 'moduleCreate'])->name('modulecreate');
+    Route::get('getmodules', [\App\Http\Controllers\Backend\Module\ModuleController::class, 'getModules'])->name('getmodule');
+    Route::get('getmodule/{id}', [\App\Http\Controllers\Backend\Module\ModuleController::class, 'getModuleById'])->name('getmoduleid');
+    Route::get('deletemodule/{id}', [\App\Http\Controllers\Backend\Module\ModuleController::class, 'deleteModule'])->name('deletemodule');
+    Route::post('module/{id}/{status}', [\App\Http\Controllers\Backend\Module\ModuleController::class, 'moduleActiveStatus'])->name('moduleactivestatus');
+
+    /*-----------Masters-----------*/
+
+    //country
+    Route::get('country', [\App\Http\Controllers\Backend\Master\CountryController::class, 'country'])->name('country');
+    Route::get('getcountriesdata', [\App\Http\Controllers\Backend\Master\CountryController::class, 'getCountryData'])->name('getcountriesdata');
+    Route::get('synccountry', [\App\Http\Controllers\Backend\Master\CountryController::class, 'syncCountry'])->name('synccountry');
+    Route::post('country/{id}/{status}', [\App\Http\Controllers\Backend\Master\CountryController::class, 'activeCountryStatus'])->name('activecountrystatus');
+
+    //State
+    Route::get('state', [\App\Http\Controllers\Backend\Master\StateController::class, 'state'])->name('state');
+    Route::get('getstatesdata', [\App\Http\Controllers\Backend\Master\StateController::class, 'getStatesData'])->name('getstatesdata');
+    Route::get('syncstate', [\App\Http\Controllers\Backend\Master\StateController::class, 'syncState'])->name('syncstate');
+    Route::post('state/{id}/{status}', [\App\Http\Controllers\Backend\Master\StateController::class, 'activeStateStatus'])->name('activestatestatus');
+    Route::get('getstates', [\App\Http\Controllers\Backend\Master\StateController::class, 'getState'])->name('getstate');
+
+    //City
+    Route::get('city', [\App\Http\Controllers\Backend\Master\CityController::class, 'city'])->name('city');
+    Route::get('getcitydata', [\App\Http\Controllers\Backend\Master\CityController::class, 'getCityData'])->name('getcitydata');
+    Route::get('synccity', [\App\Http\Controllers\Backend\Master\CityController::class, 'syncCity'])->name('synccity');
+    Route::post('city/{id}/{status}', [\App\Http\Controllers\Backend\Master\CityController::class, 'activeCityStatus'])->name('activecitystatus');
+    Route::get('getcities', [\App\Http\Controllers\Backend\Master\CityController::class, 'getCity'])->name('getcity');
+
+    //Main Category
+    Route::get('maincategory', [\App\Http\Controllers\Backend\Master\MainCategoryController::class, 'mainCategory'])->name('maincategory');
+    Route::post('maincategorycreate', [\App\Http\Controllers\Backend\Master\MainCategoryController::class, 'mainCategoryCreate'])->name('maincategorycreate');
+    Route::get('maincategorydata', [\App\Http\Controllers\Backend\Master\MainCategoryController::class, 'getMainCategoryData'])->name('getmaincategorydata');
+    Route::get('getmaincategory/{id}', [\App\Http\Controllers\Backend\Master\MainCategoryController::class, 'getMainCategoryById'])->name('getmaincategorybyid');
+    Route::get('deletemaincategory/{id}', [\App\Http\Controllers\Backend\Master\MainCategoryController::class, 'deleteMainCategory'])->name('deleteMaincategory');
+    Route::post('maincategory/{id}/{status}', [\App\Http\Controllers\Backend\Master\MainCategoryController::class, 'mainCategoryActiveStatus'])->name('maincategoryactivestatus');
+
+    //Category
+    Route::get('category', [\App\Http\Controllers\Backend\Master\CategoryController::class, 'category'])->name('category');
+    Route::post('categorycreate', [\App\Http\Controllers\Backend\Master\CategoryController::class, 'CategoryCreate'])->name('categorycreate');
+    Route::get('categorydata', [\App\Http\Controllers\Backend\Master\CategoryController::class, 'getCategoryData'])->name('getcategorydata');
+    Route::get('getcategory/{id}', [\App\Http\Controllers\Backend\Master\CategoryController::class, 'getCategoryById'])->name('getcategorybyid');
+    Route::get('deletecategory/{id}', [\App\Http\Controllers\Backend\Master\CategoryController::class, 'deleteCategory'])->name('deletecategory');
+    Route::post('category/{id}/{status}', [\App\Http\Controllers\Backend\Master\CategoryController::class, 'categoryActiveStatus'])->name('categoryactivestatus');
+
+    //SubCategory
+    Route::get('subcategory', [\App\Http\Controllers\Backend\Master\SubCategoryController::class, 'subCategory'])->name('subcategory');
+    Route::get('getcategorydata', [\App\Http\Controllers\Backend\Master\SubCategoryController::class, 'getCategoriesData'])->name('getcategoriesdata');
+    Route::post('subcategorycreate', [\App\Http\Controllers\Backend\Master\SubCategoryController::class, 'subCategoryCreate'])->name('subcategorycreate');
+    Route::get('getsubcategorydata', [\App\Http\Controllers\Backend\Master\SubCategoryController::class, 'getSubCategoryData'])->name('getsubcategorydata');
+    Route::get('getsubcategory/{id}', [\App\Http\Controllers\Backend\Master\SubCategoryController::class, 'getSubCategoryById'])->name('getsubcategorybyid');
+    Route::get('subcategory/{id}', [\App\Http\Controllers\Backend\Master\SubCategoryController::class, 'deleteSubCategory'])->name('deletesubcategory');
+    Route::post('subcategory/{id}/{status}', [\App\Http\Controllers\Backend\Master\SubCategoryController::class, 'subCategoryActiveStatus'])->name('subcategoryactivestatus');
+
+    //Brands
+    Route::get('brand', [\App\Http\Controllers\Backend\Master\BrandController::class, 'brand'])->name('brand');
+    Route::post('brandcreate', [\App\Http\Controllers\Backend\Master\BrandController::class, 'brandCreate'])->name('brandcreate');
+    Route::get('getbranddata', [\App\Http\Controllers\Backend\Master\BrandController::class, 'getBrandData'])->name('getbranddata');
+    Route::get('getbrand/{id}', [\App\Http\Controllers\Backend\Master\BrandController::class, 'getBrandById'])->name('getbrandbyid');
+    Route::get('brand/{id}', [\App\Http\Controllers\Backend\Master\BrandController::class, 'deleteBrand'])->name('deletebrand');
+    Route::post('brand/{id}/{status}', [\App\Http\Controllers\Backend\Master\BrandController::class, 'brandActiveStatus'])->name('brandactivestatus');
+
+    //Products
+    Route::get('product/{id?}', [\App\Http\Controllers\Backend\Master\ProductController::class, 'product'])->name('product');
+    Route::get('getcategories', [\App\Http\Controllers\Backend\Master\ProductController::class, 'getCategory'])->name('getcategory');
+    Route::post('productcreate', [\App\Http\Controllers\Backend\Master\ProductController::class, 'productCreate'])->name('productcreate');
+    Route::get('productlist', [\App\Http\Controllers\Backend\Master\ProductController::class, 'productList'])->name('productlist');
+    Route::get('productdata', [\App\Http\Controllers\Backend\Master\ProductController::class, 'productData'])->name('productdata');
+    Route::get('deleteproduct/{id}', [\App\Http\Controllers\Backend\Master\ProductController::class, 'deleteProduct'])->name('productdelete');
+    Route::post('product/{id}/{status}', [\App\Http\Controllers\Backend\Master\ProductController::class, 'productActiveStatus'])->name('productactivestatus');
+    Route::get('productmultiimgdelete/{id}', [\App\Http\Controllers\Backend\Master\ProductController::class, 'productMultiImageDelete'])->name('productmultiImagedelete');
+
+    //Shipping Charge
+    Route::get('/stateshippingcharge', [App\Http\Controllers\Backend\Master\StateShippingChargeController::class, 'stateShippingCharge'])->name('stateshippingcharge');
+    Route::post('/stateshippingcharge/store', [App\Http\Controllers\Backend\Master\StateShippingChargeController::class, 'shippingChargeStore'])->name('stateshippingchargestore');
+    Route::get('/stateshippingchargedata', [App\Http\Controllers\Backend\Master\StateShippingChargeController::class, 'getShippingChargeData'])->name('shippingchargedata');
+    Route::get('/getshippingcharge/{id}', [App\Http\Controllers\Backend\Master\StateShippingChargeController::class, 'getShippingChargeById'])->name('getshippingchargebyid');
+    Route::get('/deleteshippingcharge/{id}', [App\Http\Controllers\Backend\Master\StateShippingChargeController::class, 'deleteShippingCharge'])->name('deleteshippingcharge');
+
+    //coupon
+    Route::get('coupon', [App\Http\Controllers\Backend\Master\CouponController::class, 'coupon'])->name('coupon');
+    Route::post('couponcreate', [App\Http\Controllers\Backend\Master\CouponController::class, 'couponCreate'])->name('couponcreate');
+    Route::get('coupondata', [App\Http\Controllers\Backend\Master\CouponController::class, 'couponData'])->name('coupondata');
+    Route::get('getcoupon/{id}', [App\Http\Controllers\Backend\Master\CouponController::class, 'getCouponById'])->name('couponbyid');
+    Route::get('coupon/{id}', [App\Http\Controllers\Backend\Master\CouponController::class, 'deleteCoupon'])->name('deletecoupon');
+    Route::post('coupon/{id}/{status}', [App\Http\Controllers\Backend\Master\CouponController::class, 'couponActiveStatus'])->name('couponactivestatus');
+
+    //store
+    Route::get('store/{id?}', [App\Http\Controllers\Backend\Master\StoreController::class, 'store'])->name('store');
+    Route::post('storecreate', [App\Http\Controllers\Backend\Master\StoreController::class, 'storeCreate'])->name('storecreate');
+    Route::get('storelist', [App\Http\Controllers\Backend\Master\StoreController::class, 'storeList'])->name('storelist');
+    Route::get('storedata', [App\Http\Controllers\Backend\Master\StoreController::class, 'storeData'])->name('storedata');
+    Route::get('deletestore/{id}', [App\Http\Controllers\Backend\Master\StoreController::class, 'storeDelete'])->name('storedelete');
+    Route::post('store/{id}/{status}', [App\Http\Controllers\Backend\Master\StoreController::class, 'storeActiveStatus'])->name('storeactivestatus');
+
+    //banner
+    Route::get('banner', [App\Http\Controllers\Backend\Master\BannerController::class, 'banner'])->name('banner');
+    Route::post('bannercreate', [App\Http\Controllers\Backend\Master\BannerController::class, 'bannerCreate'])->name('bannercreate');
+    Route::get('bannerdata', [App\Http\Controllers\Backend\Master\BannerController::class, 'bannerData'])->name('bannerdata');
+    Route::get('banner/{id}', [App\Http\Controllers\Backend\Master\BannerController::class, 'getBannerById'])->name('getbannerbyid');
+    Route::get('deletebanner/{id}', [App\Http\Controllers\Backend\Master\BannerController::class, 'deleteBanner'])->name('deletebanner');
+    Route::post('banner/{id}/{status}', [App\Http\Controllers\Backend\Master\BannerController::class, 'BannerActiveStatus'])->name('Banneractivestatus');
+
+    //Attribute
+    Route::get('attribute', [App\Http\Controllers\Backend\Master\AttributeController::class, 'attribute'])->name('attribute');
+    Route::post('attributecreate', [App\Http\Controllers\Backend\Master\AttributeController::class, 'attributeCreate'])->name('attributecreate');
+    Route::get('getattribute', [App\Http\Controllers\Backend\Master\AttributeController::class, 'getAttributeData'])->name('attributedata');
+    Route::get('attribute/{id}', [App\Http\Controllers\Backend\Master\AttributeController::class, 'getAttributeById'])->name('getattributebyid');
+    Route::get('attribute/{id}', [App\Http\Controllers\Backend\Master\AttributeController::class, 'deleteAttribute'])->name('deleteattribute');
+    Route::post('attribute/{id}/{status}', [App\Http\Controllers\Backend\Master\AttributeController::class, 'attributeActiveStatus'])->name('attributeactivestatus');
+
+    //Addons
+    Route::get('addon', [App\Http\Controllers\Backend\Master\AddonController::class, 'addon'])->name('addon');
+    Route::post('addoncreate', [App\Http\Controllers\Backend\Master\AddonController::class, 'addonCreate'])->name('addoncreate');
+    Route::get('getaddon', [App\Http\Controllers\Backend\Master\AddonController::class, 'getAddonData'])->name('addondata');
+    Route::get('addon/{id}', [App\Http\Controllers\Backend\Master\AddonController::class, 'getAddonById'])->name('getaddonbyid');
+    Route::get('deleteaddon/{id}', [App\Http\Controllers\Backend\Master\AddonController::class, 'deleteAddon'])->name('deleteaddon');
+    Route::post('addon/{id}/{status}', [App\Http\Controllers\Backend\Master\AddonController::class, 'addonActiveStatus'])->name('addonactivestatus');
+
+    //Roles & Permissions
+    //Roles
+    Route::get('roles', [\App\Http\Controllers\Backend\Permissions\RolesController::class, 'roles'])->name('roles');
+    Route::post('createroles', [\App\Http\Controllers\Backend\Permissions\RolesController::class, 'createRoles'])->name('createroles');
+    Route::get('getrolesdata', [\App\Http\Controllers\Backend\Permissions\RolesController::class, 'getRolesData'])->name('getrolesdata');
+    Route::get('getrole/{id}', [\App\Http\Controllers\Backend\Permissions\RolesController::class, 'getRoleById'])->name('getrole');
+    Route::post('changestatus/{id}/{status}', [\App\Http\Controllers\Backend\Permissions\RolesController::class, 'changeRoleStatus'])->name('changestatus');
+    Route::get('delete/role/{id}', [\App\Http\Controllers\Backend\Permissions\RolesController::class, 'deleteRole'])->name('deleterole');
+
+    //Role Permissions
+    Route::get('/rolepermissions', [\App\Http\Controllers\Backend\Permissions\RolesPermissionController::class, 'rolePermissionsView'])->name('rolePermissionsView');
+    Route::get('/getmenus', [\App\Http\Controllers\Backend\Permissions\RolesPermissionController::class, 'getMenus'])->name('getMenus');
+    Route::post('/createpermission', [\App\Http\Controllers\Backend\Permissions\RolesPermissionController::class, 'createPermission'])->name('createPermission');
+    Route::get('/permission/data', [\App\Http\Controllers\Backend\Permissions\RolesPermissionController::class, 'getPermissionData'])->name('getPermissionData');
+    Route::get('/getpermission/{id}', [\App\Http\Controllers\Backend\Permissions\RolesPermissionController::class, 'getPermissionById'])->name('getPermissionById');
+    Route::get('delete/permission/{id}', [\App\Http\Controllers\Backend\Permissions\RolesPermissionController::class, 'deletePermission'])->name('deletePermission');
+
+    //Settings
+    //Business Settings
+    Route::get('/businesssetting', [App\Http\Controllers\Backend\Settings\BusinessSettingsController::class, 'businessSettings'])->name('businesssettings');
+
+    //Secial Media Settings
+    Route::get('/socialmedia', [App\Http\Controllers\Backend\Settings\SocialMediaController::class, 'socialMedia'])->name('socialmedia');
+
+    //Payment Method
+    Route::get('/paymentmethod', [App\Http\Controllers\Backend\Settings\PaymentMethodController::class, 'paymentMethod'])->name('paymentmethod');
+
+    //Mail Config
+    Route::get('/mailconfig', [App\Http\Controllers\Backend\Settings\MailConfigController::class, 'mailConfig'])->name('mailconfig');
+
+    //SMS System Module
+    Route::get('/smssystemmodule', [App\Http\Controllers\Backend\Settings\SmsSystemModuleController::class, 'smsSystemModule'])->name('smssystemmodule');
+
+    //Notification Settings 
+    Route::get('/notificationsettings', [App\Http\Controllers\Backend\Settings\NotificationSettingsController::class, 'notificationSettings'])->name('notificatioinsettings');
+
+    //App Settings Controller
+    Route::get('/appsettings', [App\Http\Controllers\Backend\Settings\AppSettingsController::class, 'appSettings'])->name('appsettings');
+
+    //Third Party Apis
+    Route::get('/thirdpartyapis', [App\Http\Controllers\Backend\Settings\ThirdPartyApisController::class, 'thirdPartyApis'])->name('thirdpartyapis');
+
+    //Terms and Conditions
+    Route::get('/termsandconditions', [App\Http\Controllers\Backend\Settings\TermsandConditionsController::class, 'termsandConditions'])->name('termsandconditions');
+    Route::post('/termsandconditions/store', [App\Http\Controllers\Backend\Settings\TermsandConditionsController::class, 'termsandConditionsStore'])->name('termsandconditions.store');
+
+    //Privacy and Policy
+    Route::get('/privacyandpolicy', [App\Http\Controllers\Backend\Settings\PrivacyPolicyController::class, 'privacyPolicy'])->name('privacyandpolicy');
+    Route::post('/privacyandpolicy/store', [App\Http\Controllers\Backend\Settings\PrivacyPolicyController::class, 'privacyPolicyStore'])->name('privacyandpolicy.store');
+
+    //About Us
+    Route::get('/adminaboutus', [App\Http\Controllers\Backend\Settings\AboutusController::class, 'aboutUs'])->name('adminaboutus');
+    Route::post('/adminaboutus/store', [App\Http\Controllers\Backend\Settings\AboutusController::class, 'aboutUsStore'])->name('adminaboutus.store');
+
+    //Customers
+    //Customer List
+    Route::get('customer', [App\Http\Controllers\Backend\Master\CustomerController::class, 'customer'])->name('customer');
+    Route::get('customerdata', [App\Http\Controllers\Backend\Master\CustomerController::class, 'getCustomerData'])->name('getcustomerdata');
+
+    //Report
+    Route::get('/stockreport', [App\Http\Controllers\Backend\Report\StockReportController::class, 'stockReport'])->name('stockreport');
+});

@@ -1,0 +1,171 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Master;
+
+use App\Http\Controllers\Controller;
+use App\Models\MainCategory;
+use App\Traits\Common;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class MainCategoryController extends Controller
+{
+    use Common;
+
+    public function mainCategory()
+    {
+        return view('backend.admin.master.maincategory.maincategory');
+    }
+
+    public function mainCategoryCreate(Request $request)
+    {
+        $request->validate(
+            [
+                'txtMainCategoryName' => 'required',
+                'textMainCategoryIcon' => 'required',
+                'fileMainCategoryImage' => ($request->hdMainCategoryId == null) ? 'required|dimensions:height=190,width=190' : 'dimensions:height=190,width=190,fileMainCategoryImage'
+                // Remove validation for update scenario
+            ],
+            [
+                'txtMainCategoryName.required' =>  'Main Category Name is Required',
+                'fileMainCategoryImage.required' => 'Main Category Image is Required',
+                'fileMainCategoryImage.dimensions' => 'Upload Main Category Image in dimension 190 * 190 px',
+                'textMainCategoryIcon.required' => 'Main Category Icon is Required'
+            ]
+        );
+
+        DB::beginTransaction();
+        try {
+            if ($request->hdMainCategoryId == null) {
+
+                $MainCategory = MainCategory::Create([
+                    'main_category_name' => $request->txtMainCategoryName,
+                    'main_category_icon' => $request->textMainCategoryIcon,
+                    'created_by' => Auth::user()->id
+                ]);
+
+                if ($request->hasFile('fileMainCategoryImage')) {
+                    $file = $request->file('fileMainCategoryImage');
+                    $extension = $file->getClientOriginalExtension();
+                    $fileName = $this->generateRandom(16) . '.' . $extension;
+
+                    MainCategory::findorfail($MainCategory->id)->update([
+                        'main_category_image' => $this->fileUpload($file, 'upload/main_category/' . $MainCategory->id, $fileName)
+                    ]);
+                }
+
+                $notification = array(
+                    'message' => 'Main Category Created Successfully',
+                    'alert-type' => 'success'
+                );
+
+                DB::commit();
+                return redirect()->route('maincategory')->with($notification);
+            } else {
+
+                $oldImage = $request->hdMainCategoryImage;
+                if ($request->hasFile('fileMainCategoryImage')) {
+                    @unlink($oldImage);
+                    $files = $request->file('fileMainCategoryImage');
+                    $extensions = $files->getClientOriginalExtension();
+                    $fileNames = $this->generateRandom(16) . '.' . $extensions;
+                }
+
+                MainCategory::findorFail($request->hdMainCategoryId)->update([
+                    'main_category_name' => $request->txtMainCategoryName,
+                    'main_category_icon' => $request->textMainCategoryIcon,
+                    'main_category_image' => ($request->hasFile('fileMainCategoryImage')) ? $this->fileUpload($request->file('fileMainCategoryImage'), 'upload/main_category/' . $request->hdMainCategoryId, $fileNames) : $oldImage,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'Main Category Updated Successfully',
+                    'alert-type' => 'success'
+                );
+
+                DB::commit();
+                return redirect()->route('maincategory')->with($notification);
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, "POST", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+            $notification = array(
+                'message' => 'Something Went Wrong!',
+                'alert-type' => 'error'
+            );
+
+            return redirect()->route('maincategory')->with($notification);
+        }
+    }
+
+    public function getMainCategoryData()
+    {
+        $mainCategory = MainCategory::whereNull('deleted_at')->orderBy('id', 'ASC')->get();
+        return datatables()->of($mainCategory)
+            ->addColumn('action', function ($row) {
+                $html = "";
+                $html = '<i class="text-primary ri-pencil-line"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<i class="text-danger ri-delete-bin-6-line" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    function getMainCategoryById($id)
+    {
+        try {
+            $mainCategory = MainCategory::where('id', $id)->first();
+            return response()->json([
+                'maincategory' => $mainCategory
+            ]);
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function deleteMainCategory(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $mainCategory = MainCategory::findorfail($id);
+            $mainCategory->delete();
+            $mainCategory->update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Main Category Deleted Successfully',
+                'alert' => 'success'
+            );
+            DB::commit();
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (Exception $e) {
+            DB::rollback();
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+            $notification = array(
+                'message' => 'Main Category could not be deleted',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function mainCategoryActiveStatus($id, $status)
+    {
+        try {
+            MainCategory::findorfail($id)->update([
+                'is_active' => $status,
+                'updated_by' => Auth::user()->id
+            ]);
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, 'POST', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

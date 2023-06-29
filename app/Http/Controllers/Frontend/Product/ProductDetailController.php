@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Http\Controllers\Frontend\Product;
+
+use App\Http\Controllers\Controller;
+use App\Models\ProductMultipleImages;
+use App\Models\Products;
+use Illuminate\Http\Request;
+
+class ProductDetailController extends Controller
+{
+    public function productDetail($id)
+    {
+        $product = Products::select('products.*', 'categories.category_name', 'brands.brand_image')
+            ->join('categories', 'categories.id', 'products.category_id')
+            ->join('brands', 'brands.id', 'products.brand_id')
+            ->where('products.id', $id)->first();
+        $product_multi_images = ProductMultipleImages::where('product_id', $id)->get();
+        $currentUrl = url()->current();
+        $shareButtons = \Share::page($currentUrl)
+            ->facebook()
+            ->twitter()
+            ->linkedin()
+            ->telegram()
+            ->whatsapp()
+            ->pinterest();
+        return view('frontend.products.product_details', compact('product', 'product_multi_images', 'shareButtons'));
+    }
+}

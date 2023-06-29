@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Master;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class StoreController extends Controller
+{
+    function store()
+    {
+        return view('backend.admin.master.store.store');
+    }
+}

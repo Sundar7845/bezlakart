@@ -1,0 +1,172 @@
+@extends('backend.layouts.admin_master')
+@section('content')
+@section('title')
+    Notification Settings | Bezlakart
+@endsection
+<div class="row">
+    <div class="col-12">
+        <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+            <h5 id="heading">Firebase Push Notification Setup</h5>
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="https://develop.keeggi.in/admin/business-settings/update-fcm" method="post"
+                            enctype="multipart/form-data">
+                            <input type="hidden" name="_token" value="A6ZTI0Qjmr5JKuQadjOA9xH8IiwvWBm4Z0AGNr3N">
+                            <div class="form-group">
+                                <label class="input-label" for="exampleFormControlInput1">Server Key</label>
+                                <textarea name="push_notification_key" class="form-control" required>AAAAklZBJy8:APA91bFraj0UlYb1nIBwfdhZd9yYWrYbko5fSwl6eXmCykTVMWmNIWVbtixtRQic33KhE_Gg8bjLUQnKb9NigtWP4pd_SXZlH_umxTQH6pZoI9gz3yuYQWXeMFhda3chjBL57A39TzTA</textarea>
+                            </div>
+                            <div class="row" style="display: none;">
+                                <div class="col-md-12 col-12">
+                                    <div class="form-group">
+                                        <label class="input-label" for="exampleFormControlInput1">FCM Project ID</label>
+                                        <input type="text" value="e-food-9e6e3" name="fcm_project_id"
+                                            class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <button type="submit" onclick class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="col-sm-12 col-lg-12 mb-3 mb-lg-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Push Messages</h2>
+                    </div>
+                    <div class="card-body">
+                        <form action="https://develop.keeggi.in/admin/business-settings/update-fcm-messages"
+                            method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="_token" value="A6ZTI0Qjmr5JKuQadjOA9xH8IiwvWBm4Z0AGNr3N">
+                            <div class="row">
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div>    Order Pending Message
+                                        <textarea name="pending_message" class="form-control">Your order is successfully placed</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div>    Order Confirmation Message
+                                        <textarea name="confirm_message" class="form-control">Your order is confirmed</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div>    Order Processing Message
+                                        <textarea name="processing_message" class="form-control">Your order is started for cooking</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                            <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                                <label for="input-group-custom-showcode" class="form-label text-muted">
+                                                </label>
+                                                <input class="form-check-input code-switcher" type="checkbox"
+                                                    id="input-group-custom-showcode">
+                                            </div>    Store handover Message
+                                        <textarea name="order_handover_message" class="form-control">Your order is Waiting For Delivery man</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div>    Order Out for delivery Message
+                                        <textarea name="out_for_delivery_message" class="form-control">Our Delivery man is on the way</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                            <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                                <label for="input-group-custom-showcode" class="form-label text-muted">
+                                                </label>
+                                                <input class="form-check-input code-switcher" type="checkbox"
+                                                    id="input-group-custom-showcode">
+                                            </div>    Order Delivered Message
+                                            <textarea name="out_for_delivery_message" class="form-control">Our Delivery man is on the way</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                            <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                                <label for="input-group-custom-showcode" class="form-label text-muted">
+                                                </label>
+                                                <input class="form-check-input code-switcher" type="checkbox"
+                                                    id="input-group-custom-showcode">
+                                            </div>    Delivery Man Assign Message
+                                        <textarea name="delivery_boy_assign_message" class="form-control">Your order has been assigned to a delivery man</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div>    Delivery Man Delivered Message
+                                        <textarea name="delivery_boy_delivered_message" class="form-control">Your order delivered successfully</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div>    Order Canceled Message
+                                        <textarea name="order_cancled_message" class="form-control">Your order is canceled as per by your request
+                                            If not done by you kindly call 044-48137003</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div>    Order Refunded Message
+                                        <textarea name="order_refunded_message" class="form-control">Your order refunded as per by your request</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@section('footer')
+<script src="{{ asset('js/backend/settings/notification_settings.js') }}"></script>
+@endsection

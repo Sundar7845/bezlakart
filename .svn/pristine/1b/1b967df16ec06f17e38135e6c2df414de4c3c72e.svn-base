@@ -1,0 +1,159 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Permissions;
+
+use App\Enums\MenuPermissionType;
+use App\Http\Controllers\Controller;
+use App\Models\Roles;
+use App\Traits\Common;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+
+class RolesController extends Controller
+{
+    use Common;
+    //Roles View
+    public function roles()
+    {
+        try {
+            return view('backend.admin.permissions.roles');
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    //Create Roles
+    public function createRoles(Request $request)
+    {
+        $request->validate([
+            'txtRoleName' => [
+                'required',
+                Rule::unique('roles', 'role_name')->WhereNull('deleted_at')->ignore($request->hdRoleId),
+            ],
+        ], [
+            'txtRoleName.unique' => 'Role Already Exist!.'
+        ]);
+
+        DB::beginTransaction();
+        try {
+
+            if ($request->hdRoleId == null) {
+                Roles::create([
+                    'role_name' => $request->txtRoleName,
+                    'created_by' => Auth::user()->id,
+                    'created_at' => Carbon::now()
+                ]);
+
+                $notification = array(
+                    'message' => 'Role Created Successfully',
+                    'alert-type' => 'success'
+                );
+            } else {
+                Roles::findorfail($request->hdRoleId)->update([
+                    'role_name' => $request->txtRoleName
+                ]);
+
+                $notification = array(
+                    'message' => 'Role Updated Successfully',
+                    'alert-type' => 'success'
+                );
+            }
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Role Not Created!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->route('roles')->with($notification);
+    }
+
+    //Get Roles Data For DataTable
+    public function getRolesData()
+    {
+        try {
+            $rolesData = Roles::where('id','!=',1)->get();
+
+            return datatables()->of($rolesData)
+                ->addColumn('action', function ($row) {
+                    $html = "";
+                    if ($this->isUserHavePermission(MenuPermissionType::Edit)) {
+                        $html = '<i class="text-primary ri-pencil-line" onclick="doEdit(' . $row->id . ');"></i> ';
+                    }
+                    if ($this->isUserHavePermission(MenuPermissionType::Delete)) {
+                        $html .= '<i class="text-danger ri-delete-bin-6-line" id="confirm-color' . $row->id . '" onclick="showDelete(' . $row->id . ');"></i>';
+                    }
+                    return $html;
+                })->toJson();
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    //Load Role For Edit
+    public function getRoleById($id)
+    {
+        try {
+            $roles = Roles::where('id', $id)->first();
+            return response()->json([
+                'roles' => $roles
+            ]);
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    //Change Role's Active Status
+    public function changeRoleStatus($id, $status)
+    {
+        try {
+            Roles::findorfail($id)->update([
+                'is_active' => $status,
+                'updated_by' => Auth::user()->id
+            ]);
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, 'POST', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    //Delete Role
+    public function deleteRole($id)
+    {
+        DB::beginTransaction();
+        try {
+            $role = Roles::findorfail($id);
+            $role->delete();
+
+            $role->Update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Role Deleted Successfully',
+                'alert' => 'success'
+            );
+
+            DB::commit();
+            return response()->json([
+                'deleteResponse' => $notification
+            ]);
+        } catch (Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Role Could Not Be Deleted!',
+                'alert' => 'error'
+            );
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+            return response()->json([
+                'deleteResponse' => $notification
+            ]);
+        }
+    }
+}

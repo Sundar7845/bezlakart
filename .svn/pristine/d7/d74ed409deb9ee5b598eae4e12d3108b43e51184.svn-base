@@ -1,0 +1,30 @@
+
+function wishlist(id){
+
+    var product_id = id;
+    $.ajax({
+        type: "GET",
+        url: "/wishlist/product",
+        data: {
+            product_id: product_id,
+        },
+        dataType: "json",
+        success: function (data) {
+           if(data.response.alert == 'success'){
+
+                toastr.success(data.response.message);
+                toastr.options = {
+                    "closeButton": true,
+                    "progressBar": true
+                }
+               
+           }else{
+            toastr.error(data.response.message);
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true
+            }
+           }
+        },
+    });
+}

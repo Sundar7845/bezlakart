@@ -1,0 +1,163 @@
+<?php
+
+namespace App\Traits;
+
+use App\Enums\MenuPermissionType;
+use App\Models\BusinessSetting;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\Log;
+use App\Models\Menu;
+use App\Models\State;
+use App\Models\User;
+use App\Models\UserRolePermissions;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
+trait Common
+{
+    public function Log($transaction_name, $mode, $log_message, $user_id, $ip_address, $system_name, $is_app = 0)
+    {
+        Log::create([
+            'transaction_name' => $transaction_name,
+            'mode' => $mode,
+            'log_message' => $log_message,
+            'user_id' => $user_id,
+            'ip_address' => $ip_address,
+            'system_name' =>  $system_name,
+            'is_app' =>  $is_app,
+            'log_date' => Carbon::now()
+        ]);
+    }
+
+    public function fileUpload($fileinput, $filepath, $fileName)
+    {
+        $fileinput->move(public_path($filepath), $fileName);
+        return $filepath . '/' . $fileName;
+    }
+
+    public function generateRandom($digit)
+    {
+        $min = pow(10, $digit - 1);
+        $max = pow(10, $digit) - 1;
+        return rand($min, $max);
+    }
+
+    //User Permissions-Start//
+    public function getMenuUrl()
+    {
+        $previousUrl = url()->previous();
+        $path = parse_url($previousUrl, PHP_URL_PATH);
+        $segments = explode('/', $path);
+        $menuUrl = '/' . $segments[1];
+
+        return $menuUrl;
+    }
+
+    public function chkUserMenuPermission()
+    {
+        $menu = Menu::where('menu_url', $this->getMenuUrl())->first();
+        if ($menu) {
+            $chkUserFilePermission = UserRolePermissions::select('is_edit', 'is_delete', 'is_view', 'is_print', 'is_approval')
+                ->where('user_id', Auth::user()->id)
+                ->where('menu_id', $menu->id)
+                ->first();
+            return $chkUserFilePermission;
+        }
+    }
+
+    public function chkUserHasPermission()
+    {
+        $menu = Menu::where('menu_url', $this->getMenuUrl())->first();
+        if ($menu) {
+            $chkUserHasPermission = UserRolePermissions::where('user_id', Auth::user()->id)
+                ->where('menu_id', $menu->id)
+                ->first();
+            return ($chkUserHasPermission ? true : false);
+        } else {
+            return false;
+        }
+    }
+
+    public function isUserHavePermission($permissionType)
+    {
+        if (Auth::user()->id == 1) {
+            return true;
+        }
+
+        $userMenuPermission = $this->chkUserMenuPermission();
+
+        switch ($permissionType) {
+            case MenuPermissionType::Edit:
+                return ($userMenuPermission->is_edit == 1);
+            case MenuPermissionType::Delete:
+                return ($userMenuPermission->is_delete == 1);
+            case MenuPermissionType::View:
+                return ($userMenuPermission->is_view == 1);
+            case MenuPermissionType::Print:
+                return ($userMenuPermission->is_print == 1);
+            case MenuPermissionType::Approval:
+                return ($userMenuPermission->is_approval == 1);
+        }
+    }
+    //User Permissions-End//
+
+    public function getCountries()
+    {
+        return Country::orderBy('country_name', 'asc')->get(["country_name", "id", "country_code", "is_active"]);
+    }
+
+    public function getStates($country_id = 101, $all = 0)
+    {
+        return State::where('country_id', $country_id)
+            ->where($all ? [] : ['is_active' => 1])
+            ->orderBy('state_name', 'asc')
+            ->select('state_name', 'state_code', 'id', 'is_active')
+            ->get();
+    }
+
+    public function getCities($state_id, $all = 0)
+    {
+        return City::where('state_id', $state_id)
+            ->where($all ? [] : ['is_active' => 1])
+            ->orderBy('city_name', 'asc')
+            ->select('city_name', 'id', 'is_active')
+            ->get();
+    }
+
+    public function BussinessSettingdetails()
+    {
+        return BusinessSetting::first();
+    }
+
+    function userCreate($user_name, $email, $password, $store_id, $display_name, $mobile, $role_id, $is_active, $created_by)
+    {
+        User::create([
+            'user_name' => $user_name,
+            'email' => $email,
+            'password' => Hash::make($password),
+            'store_id' => $store_id,
+            'display_name' => $display_name,
+            'mobile' =>  $mobile,
+            'role_id' => $role_id,
+            'is_active' => $is_active,
+            'created_by' => $created_by
+        ]);
+    }
+
+    function updateUser($user_name, $email, $password, $store_id, $display_name, $mobile, $role_id, $is_active, $created_by)
+    {
+        User::where('store_id', $store_id)->update([
+            'user_name' => $user_name,
+            'email' => $email,
+            'password' => Hash::make($password),
+            'store_id' => $store_id,
+            'display_name' => $display_name,
+            'mobile' =>  $mobile,
+            'role_id' => $role_id,
+            'is_active' => $is_active,
+            'created_by' => $created_by
+        ]);
+    }
+}

@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Exception;
+use Illuminate\Http\Request;
+
+class CategoryController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+
+    function getMainCategory()
+    {
+        try {
+            $responseData = [];
+
+            $responseData['maincategory'] = [];
+            $mainCategory = $this->getMainCategories();
+            foreach ($mainCategory as $item) {
+                $mainCategoryDetails['main_category_id'] = $item->id;
+                $mainCategoryDetails['main_category_name'] = $item->main_category_name;
+                $mainCategoryDetails['main_category_image'] = url($item->main_category_image);
+                array_push($responseData['maincategory'], $mainCategoryDetails);
+            }
+
+            return response()->json(['data' => $responseData], 200);
+        } catch (Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    function getCategory()
+    {
+        try {
+            $responseData = [];
+
+            $responseData['category'] = [];
+            $category = $this->getCategories();
+            foreach ($category as $item) {
+                $categoryDetails['category_id'] = $item->id;
+                $categoryDetails['main_category_id'] = $item->main_category_id;
+                $categoryDetails['category_name'] = $item->category_name;
+                $categoryDetails['category_image'] = url($item->category_image);
+                array_push($responseData['category'], $categoryDetails);
+            }
+
+            return response()->json(['data' => $responseData], 200);
+        } catch (Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    function getSubCategory()
+    {
+        try {
+            $responseData = [];
+
+            $responseData['subcategory'] = [];
+            $subCategory = $this->getSubCategories();
+            foreach ($subCategory as $item) {
+                $subCategoryDetails['sub_category_id'] = $item->id;
+                $subCategoryDetails['main_category_id'] = $item->main_category_id;
+                $subCategoryDetails['category_id'] = $item->category_id;
+                $subCategoryDetails['sub_category_name'] = $item->sub_category_name;
+                $subCategoryDetails['sub_category_image'] = url($item->sub_category_image);
+                array_push($responseData['subcategory'], $subCategoryDetails);
+            }
+
+            return response()->json(['data' => $responseData], 200);
+        } catch (Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+}

@@ -1,0 +1,59 @@
+@extends('backend.layouts.admin_master')
+@section('content')
+@section('title')
+    App Settings | Bezlakart
+@endsection
+<div class="row">
+    <div class="col-12">
+        <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+            <h5 id="heading">App Settings</h5>
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="https://develop.keeggi.in/admin/business-settings/app-settings" method="post"
+                            enctype="multipart/form-data">
+                            <input type="hidden" name="_token" value="A6ZTI0Qjmr5JKuQadjOA9xH8IiwvWBm4Z0AGNr3N">
+                            <div class="row">
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <label class="input-label d-inline text-capitalize">App minimum version
+                                            (Android)</label>
+                                        <input type="number" placeholder="App minimum version" class="form-control"
+                                            name="app_minimum_version_android" value="3.0">
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="input-label d-inline text-capitalize">App url (Android)</label>
+                                        <input type="text" placeholder="App url" class="form-control"
+                                            name="app_url_android"
+                                            value="https://play.google.com/store/apps/details?id=com.keeggicustomer">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <label class="input-label d-inline text-capitalize">App minimum version
+                                            (IOS)</label>
+                                        <input type="number" placeholder="App minimum version" class="form-control"
+                                            name="app_minimum_version_ios" value>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="input-label d-inline text-capitalize">App url (IOS)</label>
+                                        <input type="text" placeholder="App url" class="form-control"
+                                            name="app_url_ios" value>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <button type="submit" onclick class="btn btn-primary mb-2">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@section('footer')
+<script src="{{ asset('js/backend/settings/app_settings.js') }}"></script>
+@endsection

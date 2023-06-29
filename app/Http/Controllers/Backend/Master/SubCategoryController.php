@@ -1,0 +1,192 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Master;
+
+use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\MainCategory;
+use App\Models\SubCategory;
+use App\Traits\Common;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class SubCategoryController extends Controller
+{
+    use Common;
+    public function subCategory()
+    {
+        $mainCategories = MainCategory::where('is_active', 1)->whereNull('deleted_at')->get();
+        return view('backend.admin.master.subcategory.subcategory', compact('mainCategories'));
+    }
+
+    function getCategoriesData(Request $request)
+    {
+        $categories = Category::where('main_category_id', $request->main_category_id)
+            ->where('is_active', 1)
+            ->whereNull('deleted_at')
+            ->get();
+        return response()->json([
+            'category' => $categories
+        ]);
+    }
+
+    public function subCategoryCreate(Request $request)
+    {
+        $request->validate(
+            [
+                'ddlMainCategoryName' => 'required',
+                'ddlCategoryName' => 'required',
+                'txtSubCategoryName' => 'required',
+                'fileSubCategoryImage' => ($request->hdSubCategoryId == null) ? 'required' : ''
+                // Remove validation for update scenario
+            ],
+            [
+                'ddlMainCategoryName.required' =>  'Main Category Name is Required',
+                'fileSubCategoryImage.required' => 'Sub Category Image is Required',
+                'ddlCategoryName.required' => 'Category Name is Required',
+                'txtSubCategoryName.required' => 'Sub Category Name is Required'
+            ]
+        );
+
+        DB::beginTransaction();
+        try {
+            if ($request->hdSubCategoryId == null) {
+
+                $SubCategory = SubCategory::Create([
+                    'main_category_id' => $request->ddlMainCategoryName,
+                    'category_id' => $request->ddlCategoryName,
+                    'sub_category_name' => $request->txtSubCategoryName,
+                    'created_by' => Auth::user()->id
+                ]);
+
+                if ($request->hasFile('fileSubCategoryImage')) {
+                    $file = $request->file('fileSubCategoryImage');
+                    $extension = $file->getClientOriginalExtension();
+                    $fileName = $this->generateRandom(16) . '.' . $extension;
+
+                    SubCategory::findorfail($SubCategory->id)->update([
+                        'sub_category_image' => $this->fileUpload($file, 'upload/subcategory/' . $SubCategory->id, $fileName)
+                    ]);
+                }
+
+                $notification = array(
+                    'message' => 'Sub Category Created Successfully',
+                    'alert-type' => 'success'
+                );
+
+                DB::commit();
+                return redirect()->route('subcategory')->with($notification);
+            } else {
+
+                $oldImage = $request->hdSubCategoryImage;
+                if ($request->hasFile('fileSubCategoryImage')) {
+                    @unlink($oldImage);
+                    $files = $request->file('fileSubCategoryImage');
+                    $extensions = $files->getClientOriginalExtension();
+                    $fileNames = $this->generateRandom(16) . '.' . $extensions;
+                }
+
+                SubCategory::findorFail($request->hdSubCategoryId)->update([
+                    'main_category_id' => $request->ddlMainCategoryName,
+                    'category_id' => $request->ddlCategoryName,
+                    'sub_category_name' => $request->txtSubCategoryName,
+                    'sub_category_image' => ($request->hasFile('fileSubCategoryImage')) ? $this->fileUpload($request->file('fileSubCategoryImage'), 'upload/subcategory/' . $request->hdSubCategoryId, $fileNames) : $oldImage,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'Sub Category Updated Successfully',
+                    'alert-type' => 'success'
+                );
+
+                DB::commit();
+                return redirect()->route('subcategory')->with($notification);
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, "POST", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+            $notification = array(
+                'message' => 'Something Went Wrong!',
+                'alert-type' => 'error'
+            );
+
+            return redirect()->route('subcategory')->with($notification);
+        }
+    }
+
+    public function getSubCategoryData()
+    {
+        $subCategory = SubCategory::select('sub_categories.*', 'main_categories.main_category_name', 'categories.category_name')
+            ->join('main_categories', 'main_categories.id', 'sub_categories.main_category_id')
+            ->join('categories', 'categories.id', 'sub_categories.category_id')
+            ->whereNull('sub_categories.deleted_at')
+            ->orderBy('sub_categories.id', 'ASC')
+            ->get();
+        return datatables()->of($subCategory)
+            ->addColumn('action', function ($row) {
+                $html = "";
+                $html = '<i class="text-primary ri-pencil-line"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<i class="text-danger ri-delete-bin-6-line" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    function getSubCategoryById($id)
+    {
+        try {
+            $subCategory = SubCategory::where('id', $id)->first();
+            return response()->json([
+                'subcategory' => $subCategory
+            ]);
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function deleteSubCategory(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $Category = SubCategory::findorfail($id);
+            $Category->delete();
+            $Category->update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Sub Category Deleted Successfully',
+                'alert' => 'success'
+            );
+            DB::commit();
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (Exception $e) {
+            DB::rollback();
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+            $notification = array(
+                'message' => 'Sub Category could not be deleted',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function subCategoryActiveStatus($id, $status)
+    {
+        try {
+            SubCategory::findorfail($id)->update([
+                'is_active' => $status,
+                'updated_by' => Auth::user()->id
+            ]);
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, 'POST', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

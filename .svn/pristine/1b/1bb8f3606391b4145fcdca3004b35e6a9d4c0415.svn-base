@@ -1,0 +1,165 @@
+@extends('backend.layouts.admin_master')
+@section('content')
+@section('title')
+    Main Category | Bezlakart
+@endsection
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+                        <h5 class="mb-0 pb-1">Main Category</h5>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <form action="javascript:void(0);">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Main Category Name<span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control"
+                                                        name="txtMainCategoryName" id="txtMainCategoryName"
+                                                        placeholder="Enter Main Category Name"
+                                                        value="{{ old('txtMainCategoryName') }}" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Main Category Icon<span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control"
+                                                        name="textMainCategoryIcon" id="textMainCategoryIcon"
+                                                        placeholder="Enter Main Category Icon"
+                                                        value="{{ old('textMainCategoryIcon') }}" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Main Category Image<span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="file" class="form-control"
+                                                        name="fileMainCategoryImage" id="fileMainCategoryImage"
+                                                        required>
+                                                </div>
+                                                <div class="img mt-2">
+                                                    <img src="{{ asset('admin/assets/images/users/avatar-1.jpg') }}"
+                                                        id="previewImage" width="100" height="100">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <div class="mt-4 mb-3">
+                                                    <button type="submit" id="btnSave"
+                                                        class="btn btn-success btn-flat">Save</button>
+                                                    <button type="button" class="btn btn-danger" id="btnCancel"
+                                                        onclick="cancel();">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="card">
+                                <div class="card-header align-items-center d-flex">
+                                    <h4 class="card-title mb-0 flex-grow-1">Main Category List</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="card-datatable table-responsive pt-0">
+                                        <table id="tblMainCategory" class="table">
+                                            <thead class="border-bottom">
+                                                <tr>
+                                                    <th>S.No</th>
+                                                    <th>MAIN CATEGORY IMAGE</th>
+                                                    <th>MAIN CATEGORY ICON</th>
+                                                    <th>MAIN CATEGORY Name</th>
+                                                    <th>STATUS</th>
+                                                    <th>ACTION</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>
+                                                        <img src="{{ asset('admin/assets/images/users/avatar-1.jpg') }}"
+                                                            class="avatar" width="50" height="50">
+                                                    </td>
+                                                    <td><i class="icon ri-home-2-line"></i></td>
+                                                    <td>Main Category 1</td>
+                                                    <td>
+                                                        <div class="form-check form-switch form-switch-md mb-3"
+                                                            dir="ltr">
+                                                            <input type="checkbox" class="form-check-input"
+                                                                id="customSwitchsizemd">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <i class="text-primary ri-pencil-line"></i>
+                                                        <i class="text-danger ri-delete-bin-6-line"></i>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>
+                                                        <img src="{{ asset('admin/assets/images/users/avatar-1.jpg') }}"
+                                                            class="avatar" width="50" height="50">
+                                                    </td>
+                                                    <td><i class="icon ri-flag-2-line"></i></td>
+                                                    <td>Main Category 2</td>
+                                                    <td>
+                                                        <div class="form-check form-switch form-switch-md mb-3"
+                                                            dir="ltr">
+                                                            <input type="checkbox" class="form-check-input"
+                                                                id="customSwitchsizemd">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <i class="text-primary ri-pencil-line"></i>
+                                                        <i class="text-danger ri-delete-bin-6-line"></i>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3</td>
+                                                    <td>
+                                                        <img src="{{ asset('admin/assets/images/users/avatar-1.jpg') }}"
+                                                            class="avatar" width="50" height="50">
+                                                    </td>
+                                                    <td><i class="icon ri-shape-line"></i></td>
+                                                    <td>Main Category 3</td>
+                                                    <td>
+                                                        <div class="form-check form-switch form-switch-md mb-3"
+                                                            dir="ltr">
+                                                            <input type="checkbox" class="form-check-input"
+                                                                id="customSwitchsizemd">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <i class="text-primary ri-pencil-line"></i>
+                                                        <i class="text-danger ri-delete-bin-6-line"></i>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/backend/masters/maincategory/maincategory.js') }}"></script>
+@endsection

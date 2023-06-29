@@ -1,0 +1,309 @@
+@extends('backend.layouts.admin_master')
+@section('content')
+@section('title')
+    Business Setup | BezlaKart
+@endsection
+<div class="row">
+    <div class="col-12">
+        <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+            <h5 id="heading">Business Setup</h5>
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="#" method="POST" enctype="multipart/form-data" name="store">
+                            @csrf
+                            <input type="hidden" name="hdbusinesssetupId" id="hdbusinesssetupId" value="">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <h5 class=""><i class="ri-settings-5-line"></i> Maintenance Mode</h5>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check form-switch form-switch-md form-switch-primary mb-3"
+                                                style="position: relative; margin-left: 7px;">
+                                                <input class="form-check-input" type="checkbox" role="switch"
+                                                    id="chkMainCategory" onclick="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Business Name<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="txtBusinessName"
+                                            id="txtBusinessName" placeholder="Enter Business Name" value=""
+                                            title="Enter Business Name" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Currency<span class="text-danger">*</span></label>
+                                        <select class="js-example-basic-single" name="ddlCurrency"
+                                            id="ddlCurrency" title="Please Select Currency" required>
+                                            <option value="">Select Country</option>
+                                            <option value="1">India</option>
+                                        </select>
+                                    </div>
+                                </div>
+    
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Currency Symbol Position<span class="text-danger">*</span></label>
+                                        <select class="js-example-basic-single" name="ddlCurrencySymbolPosition" id="ddlCurrencySymbolPosition"
+                                            title="Please Select State Name" required>
+                                            <option value="">Select Country</option>
+                                            <option value="1">Tamil Nadu</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                 
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Country<span class="text-danger">*</span></label>
+                                        <select class="js-example-basic-single" name="ddlCountry" id="ddlCountry"
+                                            title="Please Select Country" required>
+                                            <option value="">Select Country</option>
+                                            <option value="1">Tamil Nadu</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Language<span class="text-danger">*</span></label>
+                                        <select class="js-example-basic-single" name="ddlLanguage" id="ddlLanguage"
+                                            title="Please Select Language" required>
+                                            <option value="">Select Language</option>
+                                            <option value="1">Tamil Nadu</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Time Zone<span class="text-danger">*</span></label>
+                                        <select class="js-example-basic-single" name="ddlTimeZone" id="ddlTimeZone"
+                                            title="Please Select Time Zone" required>
+                                            <option value="">Select Time Zone</option>
+                                            <option value="1">Tamil Nadu</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Time Format<span class="text-danger">*</span></label>
+                                        <select class="js-example-basic-single" name="ddlTimeFormat" id="ddlTimeFormat"
+                                            title="Please Select Time Format" required>
+                                            <option value="">Select Time Format</option>
+                                            <option value="1">Tamil Nadu</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Scheduled Orders<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtScheduledorders" id="txtScheduledorders" class="form-control"
+                                            title="Enter Scheduled Orders" placeholder="Enter Scheduled Orders" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Order confirmation model<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtOrderconfirmationmodel" id="txtOrderconfirmationmodel" class="form-control"
+                                            title="Enter Order confirmation model" placeholder="Enter Order confirmation model" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Store can cancel a order<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtStorecancancelaorder" id="txtStorecancancelaorder" class="form-control"
+                                            title="Enter Store can cancel a order" placeholder="Enter Store can cancel a order" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Deliveryman can cancel a order <span class="text-danger">*</span></label>
+                                        <input type="text" name="txtDeliverymancancancelaorder" id="txtDeliverymancancancelaorder" class="form-control"
+                                            title="Enter Deliveryman can cancel a order" placeholder="Enter Deliveryman can cancel a order" value="" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Show earning for each order (Deliveryman app) <span class="text-danger">*</span></label>
+                                        <input type="text" name="txtShowearningforeachorder" id="txtShowearningforeachorder" class="form-control"
+                                            title="Enter Show earning for each order" placeholder="Enter Show earning for each order" value="" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Admin Order Notification<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtAdminordernotification" id="txtAdminordernotification" class="form-control"
+                                            title="Enter Admin Order Notification" placeholder="Enter Admin Order Notification" value="" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Customer Verification<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtCustomerverification" id="txtCustomerverification" class="form-control"
+                                            title="Enter Customer Verification" placeholder="Enter Customer Verification" value="" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Order Delivery Verification<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtOrderdeliveryverification" id="txtOrderdeliveryverification" class="form-control"
+                                            title="Enter Order Delivery Verification" placeholder="Enter Order Delivery Verification" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Veg/Non Veg<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtVegorNonveg" id="txtVegorNonveg" class="form-control"
+                                            title="Enter veg or Non-veg" placeholder="Enter veg or Non-veg" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Store self registration<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtStoreselfregistration" id="txtStoreselfregistration" class="form-control"
+                                            title="Enter Store self registration" placeholder="Enter Store self registration" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Deliveryman self registration<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtDeliverymanselfregistration" id="txtDeliverymanselfregistration" class="form-control"
+                                            title="Enter Deliveryman self registration" placeholder="Enter Deliveryman self registration" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Schedule Order Slot Duration Minute<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtScheduleorderslotdurationminute" id="txtScheduleorderslotdurationminute" class="form-control"
+                                            title="Enter Schedule Order Slot Duration Minute" placeholder="Enter Schedule Order Slot Duration Minute" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Digit After Decimal Point<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtDigitafterdecimalpoint" id="txtDigitafterdecimalpoint" class="form-control"
+                                            title="Enter Digit After Decimal Point" placeholder="Enter Digit After Decimal Point" value="">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Default Admin Commission<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtDefaultadmincommission" id="txtDefaultadmincommission" class="form-control"
+                                            title="Enter Default Admin Commission" placeholder="Enter Default Admin Commission" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Free Delivery Over (₹)<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtFreedeliveryover" id="txtFreedeliveryover" class="form-control"
+                                            title="Enter Free Delivery Over" placeholder="Enter Free Delivery Over" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Minimum Delivery Charge<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtMinimumdeliverycharge" id="txtMinimumdeliverycharge" class="form-control"
+                                            title="Enter Minimum Delivery Charge" placeholder="Enter Minimum Delivery Charge" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Delivery Charge Per KM<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtDeliverychargeperkm" id="txtDeliverychargeperkm" class="form-control"
+                                            title="Enter Delivery Charge Per KM" placeholder="Enter Delivery Charge Per KM" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Maximum Assigned Orders For Delivery Man<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtMaximumassignedordersfordeliveryman" id="txtMaximumassignedordersfordeliveryman" class="form-control"
+                                            title="Enter Maximum Assigned Orders" placeholder="Enter Maximum Assigned Orders" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Phone<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtPhone" id="txtPhone" class="form-control"
+                                            title="Enter Phone" placeholder="Enter Phone" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtEmail" id="txtEmail" class="form-control"
+                                            title="Enter Email" placeholder="Enter Email" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Footer Text<span class="text-danger">*</span></label>
+                                        <input type="text" name="txtFootertext" id="txtFootertext" class="form-control"
+                                            title="Enter Footer Text" placeholder="Enter Footer Text" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Logo<span class="text-danger">*</span></label>
+                                        <input type="file" name="txtLogo" id="txtLogo" class="form-control"
+                                            title="Enter Tax" placeholder="Enter Tax" value="">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Fav Icon<span class="text-danger">*</span></label>
+                                        <input type="file" name="txtFavicon" id="txtFavicon" class="form-control"
+                                            title="Enter Tax" placeholder="Enter Tax" value="">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="mt-4 mb-3">
+                                        <button type="submit" id="btnSave"
+                                            class="btn btn-success btn-flat">Save</button>
+                                        <button type="button" class="btn btn-danger" id="btnCancel"
+                                            onclick="cancel();">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@section('footer')
+<script src="{{ asset('js/backend/masters/store.js') }}"></script>
+@endsection

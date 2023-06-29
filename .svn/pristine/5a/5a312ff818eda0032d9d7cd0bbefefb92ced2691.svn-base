@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Http\Controllers\Backend\GoldChit;
+
+use App\Http\Controllers\Controller;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+
+class GoldPlanController extends Controller
+{
+    use Common;
+
+    function goldPlan()
+    {
+        return view('backend.admin.goldchit.goldplan');
+    }
+}

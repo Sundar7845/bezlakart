@@ -1,0 +1,180 @@
+@extends('backend.layouts.admin_master')
+@section('content')
+@section('title')
+    SMS Gateway Setup | Bezlakart
+@endsection
+<div class="row">
+    <div class="col-12">
+        <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+            <h5 id="heading">SMS Gateway Setup</h5>
+        </div>
+        <div class="row" style="padding-bottom: 20px">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body" style="padding: 20px">
+                    <h5 class="text-center">Twilio</h5>
+                    <span class="badge badge-soft-info mb-3">NB : #OTP# will be replace with otp</span>
+                    <form action="https://develop.keeggi.in/admin/business-settings/sms-module-update/twilio_sms"
+                        method="post">
+                        <input type="hidden" name="_token" value="A6ZTI0Qjmr5JKuQadjOA9xH8IiwvWBm4Z0AGNr3N">
+                        <div class="form-group mb-2">
+                            <label class="control-label">Twilio</label>
+                        </div>
+                        <div class="form-group mb-2 mt-2">
+                            <input type="radio" name="status" value="1">
+                            <label style="padding-left: 10px">Active</label>
+                            <br>
+                        </div>
+                        <div class="form-group mb-2">
+                            <input type="radio" name="status" value="0" checked>
+                            <label style="padding-left: 10px">Inactive </label>
+                            <br>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label class="text-capitalize" style="padding-left: 10px">SID</label><br>
+                            <input type="text" class="form-control" name="sid"
+                                value="ACbf855229b8b2e5d02cad58e116365164">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label class="text-capitalize" style="padding-left: 10px">Messaging Service Sid</label><br>
+                            <input type="text" class="form-control" name="messaging_service_id" value>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label style="padding-left: 10px">Token</label><br>
+                            <input type="text" class="form-control" name="token"
+                                value="46b9779af3aa3e10a3d2fea800cb3b15">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label style="padding-left: 10px">From</label><br>
+                            <input type="text" class="form-control" name="from" value="+12312992176">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label style="padding-left: 10px">OTP template</label><br>
+                            <input type="text" class="form-control" name="otp_template" value="Your otp is #OTP#.">
+                        </div>
+                        <button type="submit" onclick class="btn btn-primary mb-2">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body" style="padding: 20px">
+                    <h5 class="text-center">Nexmo</h5>
+                    <span class="badge badge-soft-info mb-3">NB : #OTP# will be replace with otp</span>
+                    <form action="https://develop.keeggi.in/admin/business-settings/sms-module-update/nexmo_sms"
+                        method="post">
+                        <input type="hidden" name="_token" value="A6ZTI0Qjmr5JKuQadjOA9xH8IiwvWBm4Z0AGNr3N">
+                        <div class="form-group mb-2">
+                            <label class="control-label">Nexmo</label>
+                        </div>
+                        <div class="form-group mb-2 mt-2">
+                            <input type="radio" name="status" value="1">
+                            <label style="padding-left: 10px">Active</label>
+                            <br>
+                        </div>
+                        <div class="form-group mb-2">
+                            <input type="radio" name="status" value="0" checked>
+                            <label style="padding-left: 10px">Inactive </label>
+                            <br>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label class="text-capitalize" style="padding-left: 10px">API key</label><br>
+                            <input type="text" class="form-control" name="api_key" value="5923ec09">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label style="padding-left: 10px">API Secret</label><br>
+                            <input type="text" class="form-control" name="api_secret" value="lkryf6xhyBzhftmj">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label style="padding-left: 10px">From</label><br>
+                            <input type="text" class="form-control" name="from" value="+8801723019985">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label style="padding-left: 10px">OTP template</label><br>
+                            <input type="text" class="form-control" name="otp_template"
+                                value="Your otp is #OTP#.">
+                        </div>
+                        <button type="submit" onclick class="btn btn-primary mb-2">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mt-4">
+            <div class="card">
+                <div class="card-body" style="padding: 20px">
+                    <h5 class="text-center">2factor</h5>
+                    <span class="badge badge-soft-info">EX of SMS provider's template : your OTP is XXXX here, please
+                        check.</span><br>
+                    <span class="badge badge-soft-info mb-3">NB : XXXX will be replace with otp</span>
+                    <form action="https://develop.keeggi.in/admin/business-settings/sms-module-update/2factor_sms"
+                        method="post">
+                        <input type="hidden" name="_token" value="A6ZTI0Qjmr5JKuQadjOA9xH8IiwvWBm4Z0AGNr3N">
+                        <div class="form-group mb-2">
+                            <label class="control-label">2factor</label>
+                        </div>
+                        <div class="form-group mb-2 mt-2">
+                            <input type="radio" name="status" value="1" checked>
+                            <label style="padding-left: 10px">Active</label>
+                            <br>
+                        </div>
+                        <div class="form-group mb-2">
+                            <input type="radio" name="status" value="0">
+                            <label style="padding-left: 10px">Inactive </label>
+                            <br>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label class="text-capitalize" style="padding-left: 10px">API key</label><br>
+                            <input type="text" class="form-control" name="api_key"
+                                value="47ac6d18-42e9-11ed-9c12-0200cd936042">
+                        </div>
+                        <button type="submit" onclick class="btn btn-primary mb-2">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mt-4">
+            <div class="card">
+                <div class="card-body" style="padding: 20px">
+                    <h5 class="text-center">Msg91</h5>
+                    <span class="badge badge-soft-info mb-3">NB : Keep an OTP variable in your SMS providers OTP
+                        Template.</span><br>
+                    <form action="https://develop.keeggi.in/admin/business-settings/sms-module-update/msg91_sms"
+                        method="post">
+                        <input type="hidden" name="_token" value="A6ZTI0Qjmr5JKuQadjOA9xH8IiwvWBm4Z0AGNr3N">
+                        <div class="form-group mb-2">
+                            <label class="control-label">Msg91</label>
+                        </div>
+                        <div class="form-group mb-2 mt-2">
+                            <input type="radio" name="status" value="1">
+                            <label style="padding-left: 10px">Active</label>
+                            <br>
+                        </div>
+                        <div class="form-group mb-2">
+                            <input type="radio" name="status" value="0" checked>
+                            <label style="padding-left: 10px">Inactive </label>
+                            <br>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label class="text-capitalize" style="padding-left: 10px">Template ID</label><br>
+                            <input type="text" class="form-control" name="template_id"
+                                value="611e267a897b2022f5561052">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label class="text-capitalize" style="padding-left: 10px">Auth Key</label><br>
+                            <input type="text" class="form-control" name="authkey"
+                                value="365307AW0mawSKCda610b8e5aP1">
+                        </div>
+                        <button type="submit" onclick class="btn btn-primary mb-2">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+@endsection
+@section('footer')
+<script src="{{ asset('js/backend/masters/stateshippingcharge.js') }}"></script>
+@endsection

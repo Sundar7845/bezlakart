@@ -1,0 +1,79 @@
+@extends('backend.layouts.admin_master')
+@section('content')
+@section('title')
+    App Settings | Bezlakart
+@endsection
+<div class="row">
+    <div class="col-12">
+        <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+            <h5 id="heading">App Settings</h5>
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="" method="post" name="appsettings" enctype="multipart/form-data">
+                            <input type="hidden" name="hdToken" value="">
+                            <div class="row">
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <label class="input-label d-inline text-capitalize">App minimum version
+                                            (Android)</label>
+                                        <input type="number" placeholder="App minimum version" class="form-control"
+                                            name="txtapp_minimum_version_android" value=""
+                                            title="Enter App minimum version" required>
+                                        @error('txtapp_minimum_version_android')
+                                            <div class="text-danger">{{ $errors->first('txtapp_minimum_version_android') }}
+                                            </div>
+                                        @enderror
+                                        <span class="error"></span>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="input-label d-inline text-capitalize">App url (Android)</label>
+                                        <input type="text" placeholder="App url" class="form-control"
+                                            title="Enter Api url" name="txtapp_url_android" value="" required>
+                                        @error('txtapp_url_android')
+                                            <div class="text-danger">{{ $errors->first('txtapp_url_android') }}
+                                            </div>
+                                        @enderror
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <label class="input-label d-inline text-capitalize">App minimum version
+                                            (IOS)</label>
+                                        <input type="number" placeholder="App minimum version" class="form-control"
+                                            name="txtapp_minimum_version_ios" value=""
+                                            title="Enter App minimum version" required>
+                                        @error('txtapp_minimum_version_ios')
+                                            <div class="text-danger">{{ $errors->first('txtapp_minimum_version_ios') }}
+                                            </div>
+                                        @enderror
+                                        <span class="error"></span>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="input-label d-inline text-capitalize">App url (IOS)</label>
+                                        <input type="text" placeholder="App url" class="form-control"
+                                            name="txtapp_url_ios" value="" title="Enter Api url" required>
+                                        @error('txtapp_url_ios')
+                                            <div class="text-danger">{{ $errors->first('txtapp_url_ios') }}
+                                            </div>
+                                        @enderror
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <button type="submit" onclick class="btn btn-primary mb-2">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@section('footer')
+<script src="{{ asset('js/backend/settings/app_settings.js') }}"></script>
+@endsection

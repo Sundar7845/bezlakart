@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Http\Controllers\Backend\GoldChit;
+
+use App\Http\Controllers\Controller;
+use App\Models\GoldPlan;
+use App\Models\PlanType;
+use App\Traits\Common;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class GoldPlanController extends Controller
+{
+    use Common;
+
+    function goldPlan()
+    {
+        $planType = PlanType::get();
+        return view('backend.admin.goldchit.goldplan', compact('planType'));
+    }
+
+    function  goldPlanCreate(Request $request)
+    {
+        $request->validate([
+            'txtPlanName' => 'required',
+            'ddlPlanType' => 'required',
+            'txtGoldType' => 'required',
+            'txtGoldWeight' => 'required',
+            'txtPlanInstallment' => 'required',
+            'txtPlanAmount' => 'required',
+            'txtTotalPlanAmount' => 'required',
+        ], [
+            'txtPlanName.required' => 'The Plan Name is required',
+            'ddlPlanType.required' => 'The Plan Type is required',
+            'txtGoldType.required' => 'The Gold Type is required',
+            'txtGoldWeight.required' => 'The Gold Weight is required',
+            'txtPlanInstallment.required' => 'The Plan Installment is required',
+            'txtPlanAmount.required' => 'The Plan Amount is required',
+            'txtTotalPlanAmount.required' => 'The Total Plan Amount is required',
+        ]);
+        DB::beginTransaction();
+        try {
+            //code...
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+    }
+}

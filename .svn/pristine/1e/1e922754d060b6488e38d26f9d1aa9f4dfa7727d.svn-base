@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Master;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class SubCategoryController extends Controller
+{
+    public function subCategory()
+    {
+        return view('backend.admin.master.subcategory.subcategory');
+    }
+}

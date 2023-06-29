@@ -1,0 +1,84 @@
+@extends('backend.layouts.admin_master')
+@section('content')
+@section('title')
+    Social Pages | Bezlakart
+@endsection
+<div class="row">
+    <div class="col-12">
+        <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+            <h5 id="heading">Social Pages</h5>
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form style="text-align: left;" action="javascript:">
+                            <input type="hidden" name="_token" value="A6ZTI0Qjmr5JKuQadjOA9xH8IiwvWBm4Z0AGNr3N">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="name" class>Name</label>
+                                        <select class="form-control" name="name" id="name" style="width: 100%">
+                                            <option>---Select---</option>
+                                            <option value="instagram">Instagram</option>
+                                            <option value="facebook">Facebook</option>
+                                            <option value="twitter">Twitter</option>
+                                            <option value="linkedin">LinkedIn</option>
+                                            <option value="pinterest">Pinterest</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12 mt-2">
+                                        <input type="hidden" id="id">
+                                        <label for="link" class>Social Media Url</label>
+                                        <input type="text" name="link" class="form-control" id="link"
+                                            placeholder="Social Media Url" required>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input type="hidden" id="id">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button id="add" class="btn btn-primary" style="color: white">Save</button>
+                                <a id="update" class="btn btn-primary" href="javascript:"
+                                    style="display: none; color: #fff;">Update</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header align-items-center d-flex">
+                        <h4 class="card-title mb-0 flex-grow-1"> Social Media List</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-datatable table-responsive pt-0">
+                            <table id="tblShippingcharge" class="table">
+                                <thead class="border-bottom">
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>NAME</th>
+                                        <th>LINK</th>
+                                        <th>STATUS</th>
+                                        <th>ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@section('footer')
+<script src="{{ asset('js/backend/settings/business_setup.js') }}"></script>
+@endsection

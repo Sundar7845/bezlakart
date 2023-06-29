@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Http\Controllers\Frontend\Login;
+
+use App\Http\Controllers\Controller;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+
+
+class ForgotPasswordController extends Controller
+{
+    public function forgotPassword(){
+        
+        return view('frontend.auth.forgotpassword');
+    }
+
+    public function forgetPasswordStore(Request $request) {
+        $request->validate([
+            'txtResetemail' => 'required',
+        ]);
+
+        $token = Str::random(64);
+
+        DB::table('password_resets')->insert([
+            'email' => $request->txtResetemail,
+            'token' => $token,
+            'created_at' => Carbon::now()
+        ]);
+
+        Mail::send('frontend.auth.forgotpassword_email', ['token' => $token], function($message) use($request){
+            $message->to($request->txtResetemail);
+            $message->from(env('MAIL_FROM_ADDRESS'), env('APP_NAME'));
+            $message->subject('Reset Password');
+        });
+
+        return back()->with('message', 'We have emailed your password reset link!');
+    }
+
+    public function resetPassword($token){
+        
+
+    }
+}

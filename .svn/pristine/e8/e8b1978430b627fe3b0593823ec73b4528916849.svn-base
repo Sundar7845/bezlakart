@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Traits\Common;
+use App\Traits\ResponseAPI;
+use Exception;
+use Illuminate\Http\Request;
+
+class ProductController extends Controller
+{
+    use Common;
+    use ResponseAPI;
+
+    function products()
+    {
+        // try {
+            $responseData = [];
+
+            $responseData['products'] = [];
+            $products = $this->getProducts();
+            foreach ($products as $item) {
+                $productDetails['product_id'] = $item->id;
+                $productDetails['main_category_id'] = $item->main_category_id;
+                $productDetails['category_id'] = $item->category_id;
+                $productDetails['sub_category_id'] = $item->sub_category_id;
+                $productDetails['brand_id'] = $item->brand_id;
+                $productDetails['store_id'] = $item->store_id;
+                $productDetails['discount_type_id'] = $item->discount_type_id;
+                $productDetails['product_name'] = $item->product_name;
+                $productDetails['product_price'] = $item->product_price;
+                $productDetails['product_tags'] = $item->product_tags;
+                $productDetails['product_stock'] = $item->product_stock;
+                $productDetails['product_discount'] = $item->discount;
+                $productDetails['commission_amount'] = $item->commission_amount;
+                $productDetails['product_image'] = url($item->product_image);
+                array_push($responseData['products'], $productDetails);
+            }
+
+            return response()->json(['data' => $responseData], 200);
+        // } catch (Exception $e) {
+        //     return $this->error($e->getMessage(), $e->getCode());
+        // }
+    }
+}

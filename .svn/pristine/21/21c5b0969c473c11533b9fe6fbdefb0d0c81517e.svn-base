@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Profile;
+
+use App\Http\Controllers\Controller;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class ProfileController extends Controller
+{
+    function profile()
+    {
+        try {
+            return view('backend.admin.profile.profile');
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    function profileUpdate(Request $request)
+    {
+        
+    }
+}

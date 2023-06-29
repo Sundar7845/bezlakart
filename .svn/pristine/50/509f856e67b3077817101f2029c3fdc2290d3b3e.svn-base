@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Settings;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class ThirdPartyApisController extends Controller
+{
+    public function thirdPartyApis(){
+
+        return view('backend.admin.settings.third_party_apis.third_party_apis');
+    }
+}

@@ -1,0 +1,81 @@
+<?php
+
+namespace App\Http\Controllers\Frontend\Login;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+
+
+class ForgotPasswordController extends Controller
+{
+    
+    public function forgotPassword(){
+        
+        return view('frontend.auth.forgotpassword');
+    }
+
+    public function forgetPasswordStore(Request $request) {
+       
+        $validator = Validator::make($request->all(),[
+            'txtForgotemail' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+        $token = Str::random(64);
+
+        DB::table('password_resets')->insert([
+            'email' => $request->txtForgotemail,
+            'token' => $token,
+            'created_at' => Carbon::now()
+        ]);
+
+        Mail::send('frontend.auth.forgotpassword_email', ['token' => $token], function($message) use($request){
+            $message->to($request->txtForgotemail);
+            $message->from(env('MAIL_FROM_ADDRESS'), env('APP_NAME'));
+            $message->subject('Reset Password');
+        });
+
+        return back()->with('message', 'We have emailed your password reset link!');
+    }
+
+    public function resetPassword($token){
+        
+        return view('frontend.auth.newpasswordadd', ['token' => $token]);
+    }
+
+    public function resetPasswordStore(Request $request){
+
+        $validator = Validator::make($request->all(),[
+            'txtResetemail' => 'required',
+            'txtNewpassword' => 'required',
+            'txtNewconfirmpassword' => 'required'
+        ]);
+
+        if($validator->fails()){
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+        $update = DB::table('password_resets')->where(['email' => $request->txtResetemail, 'token' => $request->token])->first();
+
+        if(!$update){
+            return back()->withInput()->with('error', 'Invalid token!');
+        }
+
+        $user = User::where('email', $request->txtResetemail)->update(['password' => Hash::make($request->txtNewpassword)]);
+
+        // Delete password_resets record
+        DB::table('password_resets')->where(['email'=> $request->txtResetemail])->delete();
+
+        return redirect()->route('loginform')->with('message', 'Your password has been successfully changed!');
+    }
+}

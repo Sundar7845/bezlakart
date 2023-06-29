@@ -1,0 +1,85 @@
+@extends('backend.layouts.admin_master')
+@section('content')
+@section('title')
+    Mail Config | Bezlakart
+@endsection
+<div class="row">
+    <div class="col-12">
+        <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+            <h5 id="heading">SMTP Mail Setup</h5>
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form class="card-body" action="https://develop.keeggi.in/admin/business-settings/mail-config"
+                            method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="_token" value="A6ZTI0Qjmr5JKuQadjOA9xH8IiwvWBm4Z0AGNr3N">
+                            <div class="form-group mb-3 text-center">
+                                <label class="control-label h3">SMTP mail config</label>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label style="padding-left: 10px">Status</label>
+                            </div>
+                            <div class="form-group mb-3 mt-2">
+                                <input type="radio" name="status" value="1" checked>
+                                <label style="padding-left: 10px">Active</label>
+                                <br>
+                            </div>
+                            <div class="form-group mb-3">
+                                <input type="radio" name="status" value="0">
+                                <label style="padding-left: 10px">Inactive</label>
+                                <br>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label style="padding-left: 10px">Mailer
+                                    Name</label><br>
+                                <input type="text" placeholder="ex : Alex" class="form-control" name="name"
+                                    value="Keeggi Delivers" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label style="padding-left: 10px">Host</label><br>
+                                <input type="text" class="form-control" name="host" value="mail.keeggi.in"
+                                    required>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label style="padding-left: 10px">Driver</label><br>
+                                <input type="text" class="form-control" name="driver" value="smtp" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label style="padding-left: 10px">Port</label><br>
+                                <input type="text" class="form-control" name="port" value="587" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label style="padding-left: 10px">Username</label><br>
+                                <input type="text" placeholder="ex : ex@yahoo.com" class="form-control"
+                                    name="username" value="admin" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label style="padding-left: 10px">Email
+                                    ID</label><br>
+                                <input type="text" placeholder="ex : ex@yahoo.com" class="form-control"
+                                    name="email" value="admin@keeggi.in" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label style="padding-left: 10px">Encryption</label><br>
+                                <input type="text" placeholder="ex : tls" class="form-control" name="encryption"
+                                    value="STARTTLS" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label style="padding-left: 10px">Password</label><br>
+                                <input type="text" class="form-control" name="password" value="!JnHD88899*iit@iit"
+                                    required>
+                            </div>
+                            <button type="submit" onclick class="btn btn-primary mb-2">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@section('footer')
+<script src="{{ asset('js/backend/settings/mail_config.js') }}"></script>
+@endsection

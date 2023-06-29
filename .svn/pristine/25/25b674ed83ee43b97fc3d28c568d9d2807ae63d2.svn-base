@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Http\Controllers\Frontend\Shop;
+
+use App\Http\Controllers\Controller;
+use App\Models\Brand;
+use App\Models\MainCategory;
+use App\Models\Products;
+use Illuminate\Http\Request;
+
+class CategoryWiseProductShowing extends Controller
+{
+    public function categoryWiseProducts($id)
+    {
+        $brands = Brand::where('is_active', 1)->get();
+        $maincategorys = MainCategory::where('is_active', 1)->get();
+        $products = Products::where('main_category_id', $id)->where('is_active', 1)->get();
+
+        return view('frontend.shop.shop', compact('brands', 'maincategorys', 'products'));
+    }
+}

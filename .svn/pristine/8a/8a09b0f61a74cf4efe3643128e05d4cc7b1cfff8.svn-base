@@ -1,0 +1,89 @@
+@extends('backend.layouts.admin_master')
+@section('content')
+@section('title')
+    Profile | Bezlakart
+@endsection
+<div class="row">
+    <div class="col-12">
+        <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+            <h5 id="heading">Profile Update</h5>
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="#" name="profile" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <input type="hidden" name="hdProfileId" id="hdProfileId" value="{{ $profiledetails->id }}">
+                            <input type="hidden" name="hdProfileImg" id="hdProfileImg"
+                                value="{{ $profiledetails->user_img_path }}">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="txtUserName">Name
+                                        </label>
+                                        <input type="text" name="txtUserName" id="txtUserName" class="form-control"
+                                            id="txtUserName" value="{{ $profiledetails->display_name }}"
+                                            placeholder="Enter Name" title="Enter UserName" />
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="txtMobile">Mobile Number
+                                        </label>
+                                        <input type="text" name="txtMobile" id="txtMobile"
+                                            class="form-control mobilenumber" id="txtMobile"
+                                            value="{{ $profiledetails->mobile }}" placeholder="Enter Mobile Number"
+                                            required title="Enter Mobile Number" />
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3 form-password-toggle">
+                                        <label class="form-label" for="password">Password
+                                        </label>
+                                        <input type="password" class="form-control" name="txtPassword" id="txtPassword"
+                                            placeholder="******" />
+                                        <span toggle="#txtPassword" class="ri-eye-fill field-icon toggle"></span>
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3 form-password-toggle">
+                                        <label class="form-label" for="password_confirmation">Confirm Password
+                                        </label>
+                                        <input type="password" class="form-control" name="txtConfirmPassword"
+                                            id="txtConfirmPassword" placeholder="******" />
+                                        <span toggle="#txtConfirmPassword" class="ri-eye-fill field-icon toggle"></span>
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="basic-default-name">Profile Image
+                                        </label>
+                                        <input type="file" name="fileProfileImage" id="fileProfileImage"
+                                            class="form-control" />
+                                        <div class="img mt-2">
+                                            <img src="{{ asset($profiledetails->user_img_path ? $profiledetails->user_img_path : 'images/no-image.jpg') }}"
+                                                id="previewImage1" width="100" height="100">
+                                        </div>
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="mt-4 mb-3 d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@section('footer')
+<script src="{{ asset('js/backend/settings/app_settings.js') }}"></script>
+@endsection

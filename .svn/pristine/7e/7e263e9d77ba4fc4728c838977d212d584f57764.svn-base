@@ -1,0 +1,180 @@
+@extends('backend.layouts.admin_master')
+@section('content')
+@section('title')
+    Notification Settings | Bezlakart
+@endsection
+<div class="row">
+    <div class="col-12">
+        <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+            <h5 id="heading">Firebase Push Notification Setup</h5>
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="" name="notificationsetup" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="hdToken" value="">
+                            <div class="form-group">
+                                <label class="input-label" for="exampleFormControlInput1">Server Key</label>
+                                <textarea name="txtpush_notification_key" class="form-control" required></textarea>
+                                @error('txtpush_notification_key')
+                                    <div class="text-danger">{{ $errors->first('txtpush_notification_key') }}
+                                    </div>
+                                @enderror
+                                <span class="error"></span>
+                            </div>
+                            <div class="row" style="display: none;">
+                                <div class="col-md-12 col-12">
+                                    <div class="form-group">
+                                        <label class="input-label" for="exampleFormControlInput1">FCM Project ID</label>
+                                        <input type="text" value="" name="txtfcm_project_id"
+                                            class="form-control">
+                                        @error('txtfcm_project_id')
+                                            <div class="text-danger">{{ $errors->first('txtfcm_project_id') }}
+                                            </div>
+                                        @enderror
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <button type="submit" onclick class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="col-sm-12 col-lg-12 mb-3 mb-lg-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Push Messages</h2>
+                    </div>
+                    <div class="card-body">
+                        <form action=""
+                            method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="_token" value="A6ZTI0Qjmr5JKuQadjOA9xH8IiwvWBm4Z0AGNr3N">
+                            <div class="row">
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div> Order Pending Message
+                                        <textarea name="txtpending_message" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div> Order Confirmation Message
+                                        <textarea name="txtconfirm_message" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div> Order Processing Message
+                                        <textarea name="txtprocessing_message" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div> Store handover Message
+                                        <textarea name="txtorder_handover_message" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div> Order Out for delivery Message
+                                        <textarea name="txtout_for_delivery_message" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div> Order Delivered Message
+                                        <textarea name="txtout_for_delivery_message" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div> Delivery Man Assign Message
+                                        <textarea name="txtdelivery_boy_assign_message" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div> Delivery Man Delivered Message
+                                        <textarea name="txtdelivery_boy_delivered_message" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div> Order Canceled Message
+                                        <textarea name="txtorder_cancled_message" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch form-switch-right form-switch-md mb-2">
+                                            <label for="input-group-custom-showcode" class="form-label text-muted">
+                                            </label>
+                                            <input class="form-check-input code-switcher" type="checkbox"
+                                                id="input-group-custom-showcode">
+                                        </div> Order Refunded Message
+                                        <textarea name="txtorder_refunded_message" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@section('footer')
+<script src="{{ asset('js/backend/settings/notification_settings.js') }}"></script>
+@endsection

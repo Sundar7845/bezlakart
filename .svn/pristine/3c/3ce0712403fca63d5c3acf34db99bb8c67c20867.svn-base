@@ -1,0 +1,77 @@
+@extends('backend.layouts.admin_master')
+@section('content')
+@section('title')
+    City | BezlaKart
+@endsection
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+                        <h5 class="mb-0 pb-1">City</h5>
+                    </div>
+                    <div class="col-lg-12 mb-4 mb-lg-0">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between">
+                                <h5 class="card-title m-0 me-2">City List</h5>
+                                <a href="#" class="btn btn-success">Sync City</a>
+                            </div>
+                            <div class="card-datatable table-responsive pt-0">
+                                <table id="tblCity" class="table">
+                                    <thead class="border-bottom">
+                                        <tr>
+                                            <th>S.No</th>
+                                            <th>CITY NAME</th>
+                                            <th>STATE NAME</th>
+                                            <th>STATUS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Coimbatore</td>
+                                            <td>TamilNadu</td>
+                                            <td>
+                                                <div class="form-check form-switch form-switch-md mb-3" dir="ltr">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        id="customSwitchsizemd">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>Kannur</td>
+                                            <td>Kerala</td>
+                                            <td>
+                                                <div class="form-check form-switch form-switch-md mb-3" dir="ltr">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        id="customSwitchsizemd">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td>Hosur</td>
+                                            <td>Karnataka</td>
+                                            <td>
+                                                <div class="form-check form-switch form-switch-md mb-3" dir="ltr">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        id="customSwitchsizemd">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@section('footer')
+<script src="{{ asset('assets/js/backend/masters/city/city.js') }}"></script>
+@endsection

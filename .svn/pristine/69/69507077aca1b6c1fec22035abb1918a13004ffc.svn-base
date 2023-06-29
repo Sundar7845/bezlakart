@@ -1,0 +1,325 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Master;
+
+use App\Http\Controllers\Controller;
+use App\Models\Addons;
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\DiscountType;
+use App\Models\MainCategory;
+use App\Models\ProductMultipleImages;
+use App\Models\Products;
+use App\Models\Store;
+use App\Models\SubCategory;
+use App\Models\SystemModules;
+use App\Traits\Common;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class ProductController extends Controller
+{
+    use Common;
+    public function product($id = null)
+    {
+        try {
+            $brand = Brand::where('is_active', 1)->wherenull('deleted_at')->get();
+            $mainCategory = MainCategory::where('is_active', 1)->wherenull('deleted_at')->get();
+            $systemModule = SystemModules::where('is_active', 1)->wherenull('deleted_at')->get();
+            $store = Store::where('is_active', 1)->wherenull('deleted_at')->get();
+            $discountTypes = DiscountType::get();
+            $addons = Addons::where('is_active', 1)->wherenull('deleted_at')->get();
+
+            if ($id) {
+                $product = Products::findorfail($id);
+                $category = Category::where('is_active', 1)->whereNull('deleted_at')->get();
+                $subcategory = SubCategory::where('is_active', 1)->whereNull('deleted_at')->get();
+                $productMultiImg = ProductMultipleImages::where('product_id', $id)->get();
+                return view('backend.admin.master.product.productedit', compact(
+                    'brand',
+                    'mainCategory',
+                    'systemModule',
+                    'store',
+                    'discountTypes',
+                    'addons',
+                    'product',
+                    'category',
+                    'subcategory',
+                    'productMultiImg'
+                ));
+            }
+            return view('backend.admin.master.product.product', compact(
+                'brand',
+                'mainCategory',
+                'systemModule',
+                'store',
+                'discountTypes',
+                'addons'
+            ));
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    function getCategory(Request $request)
+    {
+        $categories = Category::where('main_category_id', $request->main_category_id)
+            ->where('is_active', 1)
+            ->whereNull('deleted_at')
+            ->get();
+
+        $subCategories = SubCategory::where('category_id', $request->category_id)
+            ->where('main_category_id', $request->main_category_id)->where('is_active', 1)
+            ->whereNull('deleted_at')
+            ->get();
+        return response()->json([
+            'category' => $categories,
+            'subCategory' => $subCategories
+        ]);
+    }
+
+    function productCreate(Request $request)
+    {
+        // dd($request->all());
+        $request->validate([
+            'txtProductName' => 'required',
+            'txtProductDescription' => 'required',
+            'fileProductImage' => $request->hdProductId == null ? 'required|dimensions:height=900,width=800' : '',
+            'fileProductMulImg' => $request->hdProductId == null ? 'dimensions:height=900,width=800' : '',
+            'ddlStoreName' => 'required',
+            'ddlBrandName' => 'required',
+            'txtStocks' => 'required',
+            'txtPrice' => 'required',
+            // 'txtDiscountPercentage' => 'required',
+            // 'ddlDiscount' => 'required',
+            'txtCommissionAmt' => 'required',
+            'ddlMainCategory' => 'required',
+            'ddlCategory' => 'required',
+            'ddlSubCategory' => 'required',
+            'ddlSystemModule' => 'required',
+            'txtProductTag' => 'required',
+            'txtShortDescription' => 'required'
+        ], [
+            'txtProductName.required' => 'The Product Name is required',
+            'txtProductDescription.required' => 'The Product description required',
+            'fileProductImage.required' => 'The Product Image is required',
+            'ddlStoreName.required' => 'The Store Name is required',
+            'ddlBrandName.required' => 'The Brand Name is required',
+            'txtStocks.required' => 'The Stock is required',
+            'txtPrice.required' => 'The Price is required',
+            // 'txtDiscountPercentage.required' => 'The Discount Percentage required',
+            // 'ddlDiscount.required' => 'The Discount is required',
+            'txtCommissionAmt.required' => 'The Commission Amount is required',
+            'ddlMainCategory.required' => 'The Main Category is required',
+            'ddlCategory.required' => 'The Category is required',
+            'ddlSubCategory.required' => 'The Sub Category is required',
+            'ddlSystemModule.required' => 'The System Module is required',
+            'txtProductTag.required' => 'The Product Tag is required',
+            'txtShortDescription.required' => 'The Short Description is required',
+            'fileProductImage.dimensions' => 'Please upload image in dimension 800 * 900 px',
+            'fileProductMulImg.dimensions' => 'Please upload image in dimension 800 * 900 px'
+        ]);
+
+        DB::beginTransaction();
+        try {
+
+            if ($request->hdProductId == null) {
+
+                $product = Products::Create([
+                    'product_name' => $request->txtProductName,
+                    'description' => $request->txtProductDescription,
+                    'short_description' => $request->txtShortDescription,
+                    'main_category_id' => $request->ddlMainCategory,
+                    'category_id' => $request->ddlCategory,
+                    'sub_category_id' => $request->ddlSubCategory,
+                    'product_price' => $request->txtPrice,
+                    'system_module_id' => $request->ddlSystemModule,
+                    'product_tags' => $request->txtProductTag,
+                    'brand_id' => $request->ddlBrandName,
+                    'store_id' => $request->ddlStoreName,
+                    'product_stock' => $request->txtStocks,
+                    'discount' => $request->txtDiscount,
+                    'discount_type_id' => $request->ddlDiscount,
+                    'commission_amount' => $request->txtCommissionAmt,
+                    'created_by' => Auth::user()->id
+                ]);
+
+                if ($request->hasFile('fileProductImage')) {
+                    $file = $request->file('fileProductImage');
+                    $extension = $file->getClientOriginalExtension();
+                    $fileName = $this->generateRandom(16) . '.' . $extension;
+
+                    Products::findorfail($product->id)->update([
+                        'product_image' => $this->fileUpload($file, 'upload/product/' . $product->id, $fileName)
+                    ]);
+                }
+
+                if ($request->hasFile('fileProductMulImg')) {
+                    $files = $request->file('fileProductMulImg');
+                    foreach ($files as $value) {
+                        $extension = $value->getClientOriginalExtension();
+                        $fileNames = $this->generateRandom(16) . '.' . $extension;
+
+                        ProductMultipleImages::Insert([
+                            'product_id'    => $product->id,
+                            'product_image' => $this->fileUpload($value, 'upload/product/' . $product->id . '/multiple', $fileNames)
+                        ]);
+                    }
+                }
+
+                $notification = array(
+                    'message' => 'Product Created Successfully',
+                    'alert-type' => 'success'
+                );
+
+                DB::commit();
+                return redirect()->route('product')->with($notification);
+            } else {
+
+                $oldImage = $request->hdProductImage;
+                if ($request->hasFile('fileProductImage')) {
+                    @unlink($oldImage);
+                    $files = $request->file('fileProductImage');
+                    $extensions = $files->getClientOriginalExtension();
+                    $fileNames = $this->generateRandom(16) . '.' . $extensions;
+                }
+
+                Products::findorFail($request->hdProductId)->update([
+                    'product_name' => $request->txtProductName,
+                    'description' => $request->txtProductDescription,
+                    'short_description' => $request->txtShortDescription,
+                    'main_category_id' => $request->ddlMainCategory,
+                    'category_id' => $request->ddlCategory,
+                    'sub_category_id' => $request->ddlSubCategory,
+                    'product_price' => $request->txtPrice,
+                    'system_module_id' => $request->ddlSystemModule,
+                    'product_tags' => $request->txtProductTag,
+                    'brand_id' => $request->ddlBrandName,
+                    'store_id' => $request->ddlStoreName,
+                    'product_stock' => $request->txtStocks,
+                    'discount' => $request->txtDiscount,
+                    'discount_type_id' => $request->ddlDiscount,
+                    'commission_amount' => $request->txtCommissionAmt,
+                    'product_image' => ($request->hasFile('fileProductImage')) ? $this->fileUpload($request->file('fileProductImage'), 'upload/product/' . $request->hdProductId, $fileNames) : $oldImage,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                if ($request->hasFile('fileProductMulImg')) {
+                    $file = $request->file('fileProductMulImg');
+                    foreach ($file as $value) {
+                        $extension = $value->getClientOriginalExtension();
+                        $fileName = $this->generateRandom(16) . '.' . $extension;
+
+                        ProductMultipleImages::Insert([
+                            'product_id'    => $request->hdProductId,
+                            'product_image' => $this->fileUpload($value, 'upload/product/' . $request->hdProductId . '/multiple', $fileName)
+                        ]);
+                    }
+                }
+
+                $notification = array(
+                    'message' => 'Product Updated Successfully',
+                    'alert-type' => 'success'
+                );
+
+                DB::commit();
+                return redirect()->route('productlist')->with($notification);
+            }
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, "POST", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+            $notification = array(
+                'message' => 'Something Went Wrong!',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('product')->with($notification);
+        }
+    }
+
+    function productList()
+    {
+        try {
+            return view('backend.admin.master.product.productlist');
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function productData()
+    {
+        $product = Products::select('products.*', 'categories.category_name', 'stores.store_name')
+            ->join('categories', 'categories.id', 'products.category_id')
+            ->join('stores', 'stores.id', 'products.store_id')
+            ->whereNull('products.deleted_at')
+            ->orderBy('products.id', 'ASC')
+            ->get();
+        return datatables()->of($product)
+            ->addColumn('action', function ($row) {
+                $html = "";
+                $html = '<a href="product/' . $row->id . '"><i class="text-primary ri-pencil-line"></i></a>';
+                $html .= '<i class="text-danger ri-delete-bin-6-line" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    function deleteProduct($id)
+    {
+        DB::beginTransaction();
+        try {
+            $product = Products::findorfail($id);
+            $product->delete();
+            $product->update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Product Deleted Successfully',
+                'alert' => 'success'
+            );
+
+            DB::commit();
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (Exception $e) {
+            DB::rollback();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+            $notification = array(
+                'message' => 'Product could not be deleted',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function productActiveStatus($id, $status)
+    {
+        try {
+            Products::findorfail($id)->update([
+                'is_active' => $status,
+                'updated_by' => Auth::user()->id
+            ]);
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, 'POST', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function productMultiImageDelete($id)
+    {
+        $oldimg = ProductMultipleImages::findOrFail($id);
+        @unlink($oldimg->product_image);
+        ProductMultipleImages::findOrFail($id)->delete();
+
+        $notification = array(
+            'message' => 'Product Image Deleted Successfully',
+            'alert-type' => 'success'
+        );
+
+        return response()->json([
+            'response' => $notification
+        ]);
+    }
+}

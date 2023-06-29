@@ -1,0 +1,125 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Master;
+
+use App\Http\Controllers\Controller;
+use App\Models\State;
+use App\Models\StateShippingCharge;
+use App\Traits\Common;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+
+class StateShippingChargeController extends Controller
+{
+    use Common;
+    public function stateShippingCharge()
+    {
+        try {
+            $state = State::get();
+            return view('backend.admin.master.stateshippingcharge.stateshippingcharge', compact('state'));
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function shippingChargeStore(Request $request)
+    {
+
+        $request->validate(
+            [
+                'ddlState' => 'required',
+                'txtShippingCharge' => 'required',
+                'txtCodCharge' => 'required',
+                'ddlState' => [
+                    'required',
+                    Rule::unique('state_shipping_charges', 'state_id')->ignore($request->hdshippingId)
+                ],
+            ],
+            [
+                'ddlState.required' =>  'State Name is Required',
+                'txtShippingCharge.required' => 'Shipping Charge is Required',
+                'txtCodCharge.required' => 'COD Charge is Required',
+            ]
+        );
+
+        DB::beginTransaction();
+        try {
+
+            if ($request->hdshippingId == null) {
+
+                StateShippingCharge::Create([
+                    'state_id' => $request->ddlState,
+                    'shipping_charge' => $request->txtShippingCharge,
+                    'cod_charge' => $request->txtCodCharge,
+                    'created_at' => Carbon::now(),
+                    'created_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'State Shipping Charge Created Successfully',
+                    'alert-type' => 'success'
+                );
+
+                DB::commit();
+                return redirect()->route('stateshippingcharge')->with($notification);
+            } else {
+
+                StateShippingCharge::findorFail($request->hdshippingId)->update([
+                    'state_id' => $request->ddlState,
+                    'shipping_charge' => $request->txtShippingCharge,
+                    'cod_charge' => $request->txtCodCharge,
+                    'updated_at' => Carbon::now(),
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'State Shipping Charge Updated Successfully',
+                    'alert-type' => 'success'
+                );
+
+                DB::commit();
+                return redirect()->route('stateshippingcharge')->with($notification);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, "POST", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+            $notification = array(
+                'message' => 'Something Went Wrong!',
+                'alert-type' => 'error'
+            );
+
+            return redirect()->route('stateshippingcharge')->with($notification);
+        }
+    }
+
+    public function getShippingChargeData()
+    {
+        $stateshippingcharge = StateShippingCharge::select('state_shipping_charges.*', 'states.state_name')
+            ->join('states', 'states.id', 'state_shipping_charges.state_id')
+            ->orderBy('state_shipping_charges.id', 'ASC')
+            ->get();
+        return datatables()->of($stateshippingcharge)
+            ->addColumn('action', function ($row) {
+                $html = "";
+                $html = '<i class="text-primary ri-pencil-line"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                return $html;
+            })->toJson();
+    }
+
+    function getShippingChargeById($id)
+    {
+        try {
+            $stateshippingcharge = StateShippingCharge::where('id', $id)->first();
+            return response()->json([
+                'stateshippingcharge' => $stateshippingcharge
+            ]);
+        } catch (\Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+}

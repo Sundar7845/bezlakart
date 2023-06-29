@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Settings;
+
+use App\Http\Controllers\Controller;
+use App\Models\PrivacyAndPolicy;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Carbon;
+
+class PrivacyPolicyController extends Controller
+{
+    public function privacyPolicy(){
+
+        $privacy_and_policy = PrivacyAndPolicy::first();
+        return view('backend.admin.settings.privacy_and_policy.privacy_and_policy',compact('privacy_and_policy'));
+    }
+
+    public function privacyPolicyStore(Request $request){
+       
+        $validator = Validator::make($request->all(), [
+            'txtPrivacyandPolicy' => 'required',
+            
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+        DB::beginTransaction();
+        try {
+            if ($request->id == "new") {
+                
+                PrivacyAndPolicy::insertGetId([
+                    'privacy_and_policy' => $request->txtPrivacyandPolicy,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]);
+                $notification = array(
+                    'message' => 'Privacy And Policy Created Successfully!',
+                    'alert-type' => 'success'
+                );
+            } else {
+               
+                PrivacyAndPolicy::findOrFail($request->id)->update([
+                    'privacy_and_policy' => $request->txtPrivacyandPolicy,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]);
+
+                $notification = array(
+                    'message' => 'Privacy And Policy Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            $notification = array(
+                'message' => 'Privacy And Policy Not Updated!',
+                'alert-type' => 'error'
+            );
+            $this->Log(__FUNCTION__, $request->method(), $e->getMessage(), Auth::user()->id, $request->ip(), gethostname());
+        }
+        return redirect()->back()->with($notification);
+    }
+}

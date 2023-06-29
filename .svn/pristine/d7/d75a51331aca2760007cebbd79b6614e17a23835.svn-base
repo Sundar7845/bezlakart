@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Settings;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class BusinessSettingsController extends Controller
+{
+    public function businessSettings(){
+
+        return view('backend.admin.settings.business_setup.business_setup');
+    }
+}

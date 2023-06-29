@@ -1,0 +1,85 @@
+<?php
+
+use App\Models\BusinessSetting;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+// Include the admin routes using the group method
+require base_path('routes/admin.php');
+
+// Move the existing route inside the group
+// Route::group([], function () {
+Route::get('/', function () {
+    $maintenance = BusinessSetting::first();
+    if (isset($maintenance->is_maintenace_mode) == 1) {
+        return view('frontend.maintenance');
+    } else {
+        return view('frontend.home');
+    }
+})->name('home');
+// });
+
+//Facebook Login
+Route::get('/facebooklogin', [App\Http\Controllers\Frontend\Login\FacebookLoginController::class, 'redirectToFacebook'])->name('facebooklogin');
+Route::get('/facebook/callback', [App\Http\Controllers\Frontend\Login\FacebookLoginController::class, 'facebookLoginStore'])->name('facebookloginstore');
+
+//Google Login
+Route::get('/googlelogin', [App\Http\Controllers\Frontend\Login\GoogleLoginController::class, 'redirectToGoogle'])->name('googlelogin');
+Route::get('/google/callback', [App\Http\Controllers\Frontend\Login\GoogleLoginController::class, 'googleLoginStore'])->name('googleloginstore');
+
+//User Auth
+Route::get('/register', [App\Http\Controllers\Frontend\Register\RegisterController::class, 'register'])->name('register');
+Route::post('/register/store', [App\Http\Controllers\Frontend\Register\RegisterController::class, 'registerStore'])->name('register.store');
+
+Route::get('/login', [App\Http\Controllers\Frontend\Login\LoginController::class, 'loginForm'])->name('loginform');
+Route::post('/login/store', [App\Http\Controllers\Frontend\Login\LoginController::class, 'login'])->name('login');
+
+//Forgot Password
+Route::get('/forgotpassword', [App\Http\Controllers\Frontend\Login\ForgotPasswordController::class, 'forgotPassword'])->name('forgotpassword');
+Route::post('/forgotpassword/store', [App\Http\Controllers\Frontend\Login\ForgotPasswordController::class, 'forgetPasswordStore'])->name('forgotpasswordstore');
+Route::get('/resetpassword/{token}/{email}', [App\Http\Controllers\Frontend\Login\ForgotPasswordController::class, 'resetPassword'])->name('resetpasswordget');
+Route::post('/resetpassword/store', [App\Http\Controllers\Frontend\Login\ForgotPasswordController::class, 'resetPasswordStore'])->name('resetpasswordstore');
+
+Route::group(['middleware' => ['auth', 'prevent-back-history']], function () {
+    //Profile
+    Route::get('/account', [App\Http\Controllers\Frontend\Profile\ProfileController::class, 'myAccount'])->name('myaccount');
+
+    Route::get('/logout', [App\Http\Controllers\Frontend\Login\LoginController::class, 'logout'])->name('logout');
+
+    //contacts
+    Route::get('/contactus', [App\Http\Controllers\Frontend\Contacts\ContactsController::class, 'contactUs'])->name('contactus');
+
+    //Product
+    Route::get('/products/detail/{id}', [App\Http\Controllers\Frontend\Product\ProductDetailController::class, 'productDetail'])->name('productdetail');
+
+    //Wishlist
+    Route::get('/wishlist', [App\Http\Controllers\Frontend\Wishlist\WishlistController::class, 'wishList'])->name('wishlist');
+
+    //Shop
+    Route::get('/shop', [App\Http\Controllers\Frontend\Shop\ShopController::class, 'shop'])->name('shop');
+    Route::get('/shoplist', [App\Http\Controllers\Frontend\Shop\ShopController::class, 'shopList'])->name('shoplist');
+
+    //About Us
+    Route::get('/aboutus', [App\Http\Controllers\Frontend\Aboutus\AboutusController::class, 'aboutUs'])->name('aboutus');
+
+    //Checkout
+    Route::get('/checkout', [App\Http\Controllers\Frontend\Checkout\CheckoutController::class, 'checkout'])->name('checkout');
+
+    //Cart
+    Route::get('/cart', [App\Http\Controllers\Frontend\Cart\CartController::class, 'cart'])->name('cart');
+
+    //Order Complete
+    Route::get('/ordercomplete', [App\Http\Controllers\Frontend\Ordercomplete\OrdercompleteController::class, 'orderComplete'])->name('ordercomplete');
+
+    //FAQ
+    Route::get('/faq', [App\Http\Controllers\Frontend\Faq\FaqController::class, 'faq'])->name('faq');
+});

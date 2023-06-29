@@ -1,0 +1,311 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Master;
+
+use App\Enums\RolesType;
+use App\Http\Controllers\Controller;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\Coupon;
+use App\Models\DeliveryTimeType;
+use App\Models\State;
+use App\Models\Store;
+use App\Models\SystemModules;
+use App\Traits\Common;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+class StoreController extends Controller
+{
+    use Common;
+    public function store($id = null)
+    {
+        try {
+            $countries = Country::get();
+            $deliveryTimes = DeliveryTimeType::get();
+            $systemModule = SystemModules::get();
+
+            if ($id) {
+                $store = Store::find($id);
+                $states = State::get();
+                $cities = City::get();
+                return view('backend.admin.master.store.storeedit', compact(
+                    'countries',
+                    'deliveryTimes',
+                    'systemModule',
+                    'store',
+                    'states',
+                    'cities'
+                ));
+            }
+
+            return view('backend.admin.master.store.store', compact('countries', 'deliveryTimes', 'systemModule'));
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function storeCreate(Request $request)
+    {
+        $request->validate(
+            [
+                'txtStoreName' => 'required',
+                'ddlCountryName' => 'required',
+                'ddlStateName' => 'required',
+                'ddlCityName' => 'required',
+                // 'txtTax' => 'required',
+                'txtMinDelTime' => 'required',
+                'txtMaxDelTime' => 'required',
+                'ddlDelTimeType' => 'required',
+                'ddlSystemModule' => 'required',
+                'txtOwnerFirstName' => 'required',
+                'txtOwnerLastName' => 'required',
+                'txtMobile' => 'required',
+                'txtEmail' => 'required',
+                'txtPassword' => $request->hdStoreId == null ? 'required|min:6' : '',
+                'txtConfirmPassword' => $request->hdStoreId == null ? 'required_with:txtPassword|same:txtPassword|min:6' : '',
+                'fileStoreLogo' => $request->hdStoreId == null ? 'required|dimensions:height=124,width=320' : 'dimensions:height=124,width=320,fileBrandImage',
+                'fileCoverPhoto' => $request->hdStoreId == null ? 'required' : '',
+
+            ],
+            [
+                'txtStoreName.required' => 'The Store Name is required',
+                'ddlCountryName.required' => 'The Country Name is required',
+                'ddlStateName.required' => 'The State Name is required',
+                'ddlCityName.required' => 'The City Name is required',
+                // 'txtTax.required' => 'The Tax is required',
+                'txtMinDelTime.required' => 'The Min Time is required',
+                'txtMaxDelTime.required' => 'The Max Time is required',
+                'ddlDelTimeType.required' => 'The Time Type is required',
+                'ddlSystemModule.required' => 'The System Module is required',
+                'txtOwnerFirstName.required' => 'The First Name is required',
+                'txtOwnerLastName.required' => 'The Last Name is required',
+                'txtMobile.required' => 'The Mobile is required',
+                'txtEmail.required' => 'The Email is required',
+                'txtPassword.required' => 'The Password is required',
+                'txtConfirmPassword.required' => 'The Confirm Password is required',
+                'fileStoreLogo.required' => 'The Logo is required',
+                'fileStoreLogo.dimensions' => 'Please upload in dimension 124 * 320 px',
+                'fileCoverPhoto.required' => 'The Cover Photo is required',
+            ]
+        );
+        DB::beginTransaction();
+        try {
+            if ($request->hdStoreId == null) {
+                $store = Store::create([
+                    'store_name' => $request->txtStoreName,
+                    'country_id' => $request->ddlCountryName,
+                    'state_id' => $request->ddlStateName,
+                    'city_id' => $request->ddlCityName,
+                    // 'tax' => $request->txtTax,
+                    'aprx_min_del_time' => $request->txtMinDelTime,
+                    'aprx_max_del_time' => $request->txtMaxDelTime,
+                    'delivery_time_type_id' => $request->ddlDelTimeType,
+                    'system_module_id' => $request->ddlSystemModule,
+                    'first_name' => $request->txtOwnerFirstName,
+                    'last_name' => $request->txtOwnerLastName,
+                    'mobile' => $request->txtMobile,
+                    'email' => $request->txtEmail,
+                    'password' => Hash::make($request->txtPassword),
+                    'created_by' => Auth::user()->id
+                ]);
+
+                if ($request->hasFile('fileStoreLogo')) {
+                    $file = $request->file('fileStoreLogo');
+                    $extension = $file->getClientOriginalExtension();
+                    $fileName = $this->generateRandom(16) . '.' . $extension;
+
+                    Store::findorfail($store->id)->update([
+                        'logo' => $this->fileUpload($file, 'upload/store/' . $store->id, $fileName)
+                    ]);
+                }
+
+                if ($request->hasFile('fileCoverPhoto')) {
+                    $files = $request->file('fileCoverPhoto');
+                    $extension = $file->getClientOriginalExtension();
+                    $fileNames = $this->generateRandom(16) . '.' . $extension;
+
+                    Store::findorfail($store->id)->update([
+                        'cover_photo' => $this->fileUpload($files, 'upload/Cover/' . $store->id, $fileNames)
+                    ]);
+                }
+                //User Name
+                $OwnerName = $request->txtOwnerFirstName . $request->txtOwnerLastName;
+                //user Create
+                $this->userCreate(
+                    $request->txtStoreName,
+                    $request->txtEmail,
+                    $request->txtPassword,
+                    $store->id,
+                    $OwnerName,
+                    $request->txtMobile,
+                    RolesType::Vendor,
+                    1,
+                    Auth::user()->id
+                );
+
+                $notification = array(
+                    'message' => 'Store Created Successfully',
+                    'alert-type' => 'success'
+                );
+
+                DB::commit();
+                return redirect()->route('store')->with($notification);
+            } else {
+                $oldImage = $request->hdStoreLogo;
+                $oldCoverImage = $request->hdStoreCoverPic;
+                if ($request->hasFile('fileStoreLogo')) {
+                    @unlink($oldImage);
+                    $file = $request->file('fileStoreLogo');
+                    $extensions = $file->getClientOriginalExtension();
+                    $fileName = $this->generateRandom(16) . '.' . $extensions;
+                }
+
+                if ($request->hasFile('fileCoverPhoto')) {
+                    @unlink($oldCoverImage);
+                    $files = $request->file('fileCoverPhoto');
+                    $extensions = $files->getClientOriginalExtension();
+                    $fileNames = $this->generateRandom(16) . '.' . $extensions;
+                }
+
+                Store::find($request->hdStoreId)->update([
+                    'store_name' => $request->txtStoreName,
+                    'country_id' => $request->ddlCountryName,
+                    'state_id' => $request->ddlStateName,
+                    'city_id' => $request->ddlCityName,
+                    // 'tax' => $request->txtTax,
+                    'aprx_min_del_time' => $request->txtMinDelTime,
+                    'aprx_max_del_time' => $request->txtMaxDelTime,
+                    'delivery_time_type_id' => $request->ddlDelTimeType,
+                    'system_module_id' => $request->ddlSystemModule,
+                    'logo' => ($request->hasFile('fileStoreLogo')) ? $this->fileUpload($request->file('fileStoreLogo'), 'upload/store/' . $request->hdStoreId, $fileName) : $oldImage,
+                    'cover_photo' => ($request->hasFile('fileCoverPhoto')) ? $this->fileUpload($request->file('fileCoverPhoto'), 'upload/cover/' . $request->hdStoreId, $fileNames) : $oldCoverImage,
+                    'first_name' => $request->txtOwnerFirstName,
+                    'last_name' => $request->txtOwnerLastName,
+                    'mobile' => $request->txtMobile,
+                    'email' => $request->txtEmail,
+                    'password' => Hash::make($request->txtPassword),
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                //User Name
+                $OwnerName = $request->txtOwnerFirstName . $request->txtOwnerLastName;
+                //Update User
+                $this->updateUser(
+                    $request->txtStoreName,
+                    $request->txtEmail,
+                    $request->txtPassword,
+                    $request->hdStoreId,
+                    $OwnerName,
+                    $request->txtMobile,
+                    RolesType::Vendor,
+                    1,
+                    Auth::user()->id
+                );
+
+                $notification = array(
+                    'message' => 'Store Updated Successfully',
+                    'alert-type' => 'success'
+                );
+
+                DB::commit();
+                return redirect()->route('storelist')->with($notification);
+            }
+        } catch (Exception $e) {
+            dd($e);
+            $this->Log(__FUNCTION__, "POST", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+            $notification = array(
+                'message' => 'Something Went Wrong!',
+                'alert-type' => 'error'
+            );
+
+            return redirect()->route('store')->with($notification);
+        }
+    }
+
+    public function storeList()
+    {
+        try {
+            return view('backend.admin.master.store.storelist');
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function storeData()
+    {
+        try {
+            $storedata = Store::select('stores.*', 'system_modules.module_name')
+                ->join('system_modules', 'system_modules.id', 'stores.system_module_id')
+                ->orderBy('stores.id', 'ASC')
+                ->get();
+            return datatables()->of($storedata)
+                ->addColumn('action', function ($row) {
+                    $html = "";
+                    $html = '<a href="store/' . $row->id . '"><i class="text-primary ri-pencil-line"></i></a>';
+                    $html .= '<i class="text-danger ri-delete-bin-6-line" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                    return $html;
+                })->toJson();
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    public function storeDelete($id)
+    {
+        DB::beginTransaction();
+        try {
+            $couponCount = Coupon::where('store_id', $id)->get()->count();
+            if ($couponCount == 0) {
+                $store = Store::findorfail($id);
+                $store->delete();
+                $store->update([
+                    'deleted_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'Store Deleted Successfully',
+                    'alert' => 'success'
+                );
+
+                DB::commit();
+                return response()->json([
+                    'responseData' => $notification
+                ]);
+            } else {
+                $notification = array(
+                    'message' => 'Store Could Not Be Deleted!',
+                    'alert' => 'error'
+                );
+                return response()->json([
+                    'responseData' => $notification
+                ]);
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+            $notification = array(
+                'message' => 'Store could not be deleted',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function storeActiveStatus($id, $status)
+    {
+        try {
+            Store::findorfail($id)->update([
+                'is_active' => $status,
+                'updated_by' => Auth::user()->id
+            ]);
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, 'POST', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

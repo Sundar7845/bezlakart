@@ -1,0 +1,141 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Settings;
+
+use App\Http\Controllers\Controller;
+use App\Models\PaymentMethodSettings;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class PaymentMethodController extends Controller
+{
+    public function paymentMethod()
+    {
+        try {
+            $payment = PaymentMethodSettings::find(1);
+            return view('backend.admin.settings.payment_methods.payment_methods', compact('payment'));
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    function paymentMethodCodCreate(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            if ($request->hdPaymentMethodId == null) {
+                PaymentMethodSettings::Create([
+                    'cash_on_delivery' => $request->rdCashOnDelivery,
+                    'created_by'      => Auth::user()->id
+                ]);
+                $notification = array(
+                    'message' => 'Payment Settings Created Successfully!',
+                    'alert-type' => 'success'
+                );
+                DB::commit();
+                return redirect()->back()->with($notification);
+            } else {
+                PaymentMethodSettings::findorfail($request->hdPaymentMethodId)->update([
+                    'cash_on_delivery' => $request->rdCashOnDelivery,
+                    'updated_by'      => Auth::user()->id
+                ]);
+                $notification = array(
+                    'message' => 'Payment Settings Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+                DB::commit();
+                return redirect()->back()->with($notification);
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+            $notification = array(
+                'message' => 'Something Went Wrong!',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+    }
+
+    function digitalPaymentMethodCreate(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            if ($request->hdPaymentMethodId == null) {
+                PaymentMethodSettings::Create([
+                    'digital_payment' => $request->rdDigitalPayment,
+                    'created_by'      => Auth::user()->id
+                ]);
+                $notification = array(
+                    'message' => 'Payment Settings Created Successfully!',
+                    'alert-type' => 'success'
+                );
+                DB::commit();
+                return redirect()->back()->with($notification);
+            } else {
+                PaymentMethodSettings::findorfail($request->hdPaymentMethodId)->update([
+                    'digital_payment' => $request->rdDigitalPayment,
+                    'updated_by'      => Auth::user()->id
+                ]);
+                $notification = array(
+                    'message' => 'Payment Settings Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+                DB::commit();
+                return redirect()->back()->with($notification);
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+            $notification = array(
+                'message' => 'Something Went Wrong!',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+    }
+
+    function razorPayPaymentMethodCreate(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            if ($request->hdPaymentMethodId == null) {
+                PaymentMethodSettings::Create([
+                    'razor_pay' => $request->rdRazorPay,
+                    'razorpay_key'    => $request->txtRazorPaykey,
+                    'razorpay_secret' => $request->txtRazorPaySecret,
+                    'created_by'      => Auth::user()->id
+                ]);
+                $notification = array(
+                    'message' => 'Payment Settings Created Successfully!',
+                    'alert-type' => 'success'
+                );
+                DB::commit();
+                return redirect()->back()->with($notification);
+            } else {
+                PaymentMethodSettings::findorfail($request->hdPaymentMethodId)->update([
+                    'razor_pay' => $request->rdRazorPay,
+                    'razorpay_key'    => $request->txtRazorPaykey,
+                    'razorpay_secret' => $request->txtRazorPaySecret,
+                    'updated_by'      => Auth::user()->id
+                ]);
+                $notification = array(
+                    'message' => 'Payment Settings Updated Successfully!',
+                    'alert-type' => 'success'
+                );
+                DB::commit();
+                return redirect()->back()->with($notification);
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+            $notification = array(
+                'message' => 'Something Went Wrong!',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+    }
+}

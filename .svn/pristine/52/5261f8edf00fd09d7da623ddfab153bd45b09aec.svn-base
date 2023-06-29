@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Frontend\Shop;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class ShopController extends Controller
+{
+    public function shop()
+    {   
+        return view('frontend.shop.shop');
+    }
+
+    public function shopList()
+    {
+        return view('frontend.shop.shop_list');
+    }
+}

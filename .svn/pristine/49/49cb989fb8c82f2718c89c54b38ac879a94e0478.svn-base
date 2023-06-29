@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+Route::post('register', [App\Http\Controllers\Api\RegisterController::class, 'register']);
+Route::post('login', [App\Http\Controllers\Api\LoginController::class, 'login']);
+Route::get('getmaincategory', [App\Http\Controllers\Api\CategoryController::class, 'getMainCategory']);
+Route::get('getcategory', [App\Http\Controllers\Api\CategoryController::class, 'getCategory']);
+Route::get('getsubcategory', [App\Http\Controllers\Api\CategoryController::class, 'getSubCategory']);
+Route::get('getbrands', [App\Http\Controllers\Api\BrandController::class, 'brands']);
+Route::get('getproducts', [App\Http\Controllers\Api\ProductController::class, 'products']);
+
+Route::group(['middleware' => ['auth:api']], function () {
+    Route::post('logout', [App\Http\Controllers\Api\LoginController::class, 'logout']);
+});

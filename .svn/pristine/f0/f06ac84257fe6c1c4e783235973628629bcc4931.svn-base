@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Traits;
+
+use App\Models\Log;
+use App\Models\User;
+use Carbon\Carbon;
+
+trait Common
+{
+    public function Log($transaction_name, $mode, $log_message, $user_id, $ip_address, $system_name, $is_app = 0)
+    {
+        Log::create([
+            'transaction_name' => $transaction_name,
+            'mode' => $mode,
+            'log_message' => $log_message,
+            'user_id' => $user_id,
+            'ip_address' => $ip_address,
+            'system_name' =>  $system_name,
+            'is_app' =>  $is_app,
+            'log_date' => Carbon::now()
+        ]);
+    }
+
+    public function fileUpload($fileinput, $filepath, $fileName)
+    {
+        $fileinput->move(public_path($filepath), $fileName);
+        return $filepath . '/' . $fileName;
+    }
+
+    public function generateRandom($digit)
+    {
+        $min = pow(10, $digit - 1);
+        $max = pow(10, $digit) - 1;
+        return rand($min, $max);
+    }
+}

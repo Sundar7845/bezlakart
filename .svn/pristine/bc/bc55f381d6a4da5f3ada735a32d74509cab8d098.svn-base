@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Master;
+
+use App\Http\Controllers\Controller;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+
+class CountryController extends Controller
+{
+    use Common;
+
+    function country()
+    {
+        return view('backend.admin.master.country.country');
+    }
+
+    public function getCountryData()
+    {
+        try {
+            $state = $this->getStates(1, 1);
+            return datatables()->of($state)
+                ->addColumn('action', function ($row) {
+                    $html = "";
+                    $html = '<label class="switch">
+                                <input onclick="doStatus(' . $row->id . ');" id="chkState' . $row->id . '" type="checkbox" class="switch-input"
+                                name="chkState" ' . ($row->is_active == 1 ? "checked" : "") . ' />
+                                <span class="switch-toggle-slider">
+                                    <span class="switch-on"></span>
+                                    <span class="switch-off"></span>
+                                </span>
+                            </label>';
+                    return $html;
+                })->toJson();
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

@@ -1,0 +1,31 @@
+document.addEventListener("DOMContentLoaded", function () {
+    $("#tblBrand").Datatable();
+});
+
+const inputFiles = document.querySelectorAll('input[type="file"]');
+const previewImages = document.querySelectorAll('img[id^="previewImage"]');
+
+inputFiles.forEach(function (inputFile, index) {
+    inputFile.addEventListener("change", function () {
+        const file = this.files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener("load", function () {
+            previewImages[index].setAttribute("src", this.result);
+        });
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    });
+});
+
+function cancel() {
+    $("#ddlSubCategoryName").val("").trigger("change");
+    $("#txtBrandName").val("");
+    $("#fileBrandImage").val("");
+    $("#previewImage").attr(
+        "src",
+        "http://localhost:8000/admin/assets/images/users/avatar-1.jpg"
+    );
+}

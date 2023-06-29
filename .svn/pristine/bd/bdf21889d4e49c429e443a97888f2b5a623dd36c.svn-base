@@ -1,0 +1,114 @@
+@extends('backend.layouts.admin_master')
+@section('content')
+@section('title')
+    Main Category | Bezlakart
+@endsection
+<div class="row">
+    <div class="col-12">
+        <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+            <h5 id="heading">Main Category</h5>
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{{ route('maincategorycreate') }}" method="POST" enctype="multipart/form-data"
+                            name="mainCategory">
+                            @csrf
+                            <input type="hidden" name="hdMainCategoryId" id="hdMainCategoryId" value="">
+                            <input type="hidden" name="hdMainCategoryImage" id="hdMainCategoryImage" value="">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Main Category Name<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="txtMainCategoryName"
+                                            id="txtMainCategoryName" title="Enter Main Category Name"
+                                            placeholder="Enter Main Category Name"
+                                            value="{{ old('txtMainCategoryName') }}" required>
+                                        @error('txtMainCategoryName')
+                                            <div class="text-danger">{{ $errors->first('txtMainCategoryName') }}
+                                            </div>
+                                        @enderror
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Main Category Icon<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="textMainCategoryIcon"
+                                            id="textMainCategoryIcon" title="Enter Main Category Icon"
+                                            placeholder="Enter Main Category Icon"
+                                            value="{{ old('textMainCategoryIcon') }}" required>
+                                        @error('textMainCategoryIcon')
+                                            <div class="text-danger">{{ $errors->first('textMainCategoryIcon') }}
+                                            </div>
+                                        @enderror
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Main Category Image<span
+                                                class="text-danger">*</span></label>
+                                        <input type="file" class="form-control" name="fileMainCategoryImage"
+                                            id="fileMainCategoryImage" required>
+                                    </div>
+                                    <div class="img mt-2">
+                                        <img src="{{ asset('images/users/avatar-1.jpg') }}" id="previewImage"
+                                            width="100" height="100">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="mt-4 mb-3">
+                                        <button type="submit" id="btnSave"
+                                            class="btn btn-success btn-flat">Save</button>
+                                        <button type="button" class="btn btn-danger" id="btnCancel"
+                                            onclick="cancel();">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header align-items-center d-flex">
+                        <h4 class="card-title mb-0 flex-grow-1">Main Category List</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-datatable table-responsive pt-0">
+                            <table id="tblMainCategory"
+                                class="display table table-bordered dt-responsive dataTable dtr-inline"
+                                style="width: 100%;" aria-describedby="ajax-datatables_info">
+                                <thead class="border-bottom">
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>MAIN CATEGORY IMAGE</th>
+                                        <th>MAIN CATEGORY ICON</th>
+                                        <th>MAIN CATEGORY Name</th>
+                                        <th>STATUS</th>
+                                        <th>ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@section('footer')
+<script src="{{ asset('js/backend/masters/maincategory.js') }}"></script>
+@endsection

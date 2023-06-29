@@ -1,0 +1,150 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Master;
+
+use App\Http\Controllers\Controller;
+use App\Models\Addons;
+use App\Models\Store;
+use App\Traits\Common;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class AddonController extends Controller
+{
+    use Common;
+
+    function addon()
+    {
+        $store = Store::where('is_active', 1)->whereNull('deleted_at')->get();
+        return view('backend.admin.master.addon.addon', compact('store'));
+    }
+
+    function addonCreate(Request $request)
+    {
+        $request->validate([
+            'txtAddonName' => 'required',
+            'ddlStore' => 'required'
+        ], [
+            'txtAddonName.required' => 'The Addon Name is required',
+            'ddlStore.required' => 'Please Select Store Name'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            if ($request->hdAddonId == null) {
+
+                Addons::Create([
+                    'addon_name' => $request->txtAddonName,
+                    'store_id'   => $request->ddlStore,
+                    'created_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'Addon Created Successfully',
+                    'alert-type' => 'success'
+                );
+
+                DB::commit();
+                return redirect()->route('addon')->with($notification);
+            } else {
+
+                Addons::findorFail($request->hdAddonId)->update([
+                    'addon_name' => $request->txtAddonName,
+                    'store_id'   => $request->ddlStore,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                $notification = array(
+                    'message' => 'Addon Updated Successfully',
+                    'alert-type' => 'success'
+                );
+
+                DB::commit();
+                return redirect()->route('addon')->with($notification);
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            $this->Log(__FUNCTION__, "POST", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+            $notification = array(
+                'message' => 'Something Went Wrong!',
+                'alert-type' => 'error'
+            );
+
+            return redirect()->route('addon')->with($notification);
+        }
+    }
+
+    public function getAddonData()
+    {
+        $addon = Addons::select('addons.*', 'stores.store_name')
+            ->join('stores', 'stores.id', 'addons.store_id')
+            ->whereNull('addons.deleted_at')
+            ->orderBy('addons.id','ASC')
+            ->get();
+        return datatables()->of($addon)
+            ->addColumn('action', function ($row) {
+                $html = "";
+                $html = '<i class="text-primary ri-pencil-line"
+                onclick="doEdit(' . $row->id . ');"></i> ';
+                $html .= '<i class="text-danger ri-delete-bin-6-line" id="confrim-color(' . $row->id . ')" onclick="showDelete(' . $row->id . ');"></i>';
+                return $html;
+            })->toJson();
+    }
+
+    function getAddonById($id)
+    {
+        try {
+            $addon = Addons::where('id', $id)->first();
+            return response()->json([
+                'addon' => $addon
+            ]);
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, 'GET', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    function deleteAddon($id)
+    {
+        DB::beginTransaction();
+        try {
+            $brand = Addons::findorfail($id);
+            $brand->delete();
+            $brand->update([
+                'deleted_by' => Auth::user()->id
+            ]);
+
+            $notification = array(
+                'message' => 'Addon Deleted Successfully',
+                'alert' => 'success'
+            );
+            DB::commit();
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        } catch (Exception $e) {
+            DB::rollback();
+            $this->Log(__FUNCTION__, request()->method(), $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+            $notification = array(
+                'message' => 'Addon could not be deleted',
+                'alert' => 'error'
+            );
+            return response()->json([
+                'responseData' => $notification
+            ]);
+        }
+    }
+
+    public function addonActiveStatus($id, $status)
+    {
+        try {
+            Addons::findorfail($id)->update([
+                'is_active' => $status,
+                'updated_by' => Auth::user()->id
+            ]);
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, 'POST', $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+}

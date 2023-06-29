@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+//Admin Login View
+Route::get('/login', [App\Http\Controllers\Admin\Login\LoginController::class, 'adminLoginForm'])->name('login.view');
+
+//Admin Login
+Route::post('/store', [App\Http\Controllers\Admin\Login\LoginController::class, 'adminLogin'])->name('admin.login');
+
+//Admin Logout View
+Route::get('/logout/view', [App\Http\Controllers\Admin\Login\LoginController::class, 'adminLogoutForm'])->name('logout.view');
+
+//Add protected routes
+// Route::middleware(['admin'])->group(function () {
+    //Admin Dashboard
+    Route::get('/dashboard', [App\Http\Controllers\Admin\Dashboard\DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
+
+    //Admin Logout
+    Route::get('/logout', [App\Http\Controllers\Admin\Login\LoginController::class, 'adminLogout'])->name('admin.logout');
+
+    // Additional protected routes go here...
+// });

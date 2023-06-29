@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Http\Controllers\Frontend\Login;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Session;
+
+class LoginController extends Controller
+{
+    public function loginForm()
+    {
+        return view('frontend.auth.login');
+    }
+
+    public function login(Request $request)
+    {
+        // $validator = Validator::make($request->all(), [
+        //     'txtmobile'   => 'required',
+        //     'txtPassword' => 'required'
+        // ]);
+
+        // if ($validator->fails()) {
+        //     return redirect()->back()->withInput()->withErrors($validator);
+        // }
+        
+        dd(Auth::attempt([
+            'mobile' => $request->txtmobile,
+            'password' => $request->Password
+        ]));
+        if (Auth::attempt([
+            'mobile' => $request->txtmobile,
+            'password' => $request->txtPassword
+        ])) {
+
+            $notification = array(
+                'message' => 'Logged in successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->route('myaccount')->with($notification);
+        } else {
+            $notification = array(
+                'message' => 'Invalid credentials!',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('loginform')->with($notification);
+        }
+    }
+
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        Session::flush();
+        $request->session()->invalidate();
+        $notification = array(
+            'message' => 'Logged Out Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('loginform')->with($notification);
+    }
+}

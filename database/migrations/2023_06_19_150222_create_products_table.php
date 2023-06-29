@@ -1,0 +1,62 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateProductsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
+            $table->string('product_name')->nullable();
+            $table->text('description')->nullable();
+            $table->string('short_description')->nullable();
+            $table->string('product_image')->nullable();
+            $table->double('product_price', 8, 2)->default(0);
+            $table->string('product_tags')->nullable();
+            $table->string('product_stock')->nullable();
+            $table->double('discount', 8, 2)->default(0);
+            $table->double('commission_amount', 8, 2)->default(0);
+            $table->unsignedBigInteger('main_category_id');
+            $table->foreign('main_category_id')->references('id')->on('main_categories');
+            $table->unsignedBigInteger('category_id');
+            $table->foreign('category_id')->references('id')->on('categories');
+            $table->unsignedBigInteger('sub_category_id');
+            $table->foreign('sub_category_id')->references('id')->on('sub_categories');
+            $table->unsignedBigInteger('system_module_id');
+            $table->foreign('system_module_id')->references('id')->on('system_modules');
+            $table->unsignedBigInteger('brand_id');
+            $table->foreign('brand_id')->references('id')->on('brands');
+            $table->unsignedBigInteger('store_id');
+            $table->foreign('store_id')->references('id')->on('stores');
+            $table->unsignedBigInteger('discount_type_id');
+            $table->foreign('discount_type_id')->references('id')->on('discount_types');
+            $table->integer('is_active')->default(1);
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreign('updated_by')->references('id')->on('users');
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('products');
+    }
+}

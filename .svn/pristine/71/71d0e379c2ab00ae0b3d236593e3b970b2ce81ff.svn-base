@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Master;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class MainCategoryController extends Controller
+{
+    public function mainCategory()
+    {
+        return view('backend.admin.master.maincategory.maincategory');
+    }
+}

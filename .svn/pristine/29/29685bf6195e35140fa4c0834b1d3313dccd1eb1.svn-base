@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Http\Controllers\Frontend\Wishlist;
+
+use App\Http\Controllers\Controller;
+use App\Models\Wishlist;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class WishlistController extends Controller
+{
+    public function wishList(){
+
+        return view('frontend.wishlist.wishlist');
+    }
+
+    public function WishListStore(Request $request){
+
+       $wishlist = Wishlist::Create([
+            'user_id' => Auth::user()->id,
+            'product_id' => $request->product_id
+        ]);
+
+        $notification = array(
+            'message' => 'Added to Wishlist',
+            'alert' => 'success'
+        );
+
+        return response()->json([
+            'response' => $notification
+        ]);
+
+    }
+}

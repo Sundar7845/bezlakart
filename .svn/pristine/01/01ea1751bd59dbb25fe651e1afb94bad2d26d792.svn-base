@@ -1,0 +1,54 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+//Admin Login View
+Route::get('/login', [App\Http\Controllers\Admin\Login\LoginController::class, 'adminLoginForm'])->name('login.view');
+
+//Admin Login
+Route::post('/store', [App\Http\Controllers\Admin\Login\LoginController::class, 'adminLogin'])->name('admin.login');
+
+Route::group(['middleware' => ['auth', 'prevent-back-history']], function () {
+
+    //Admin Dashboard
+    Route::get('/dashboard', [App\Http\Controllers\Admin\Dashboard\DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
+
+    //Admin Logout
+    Route::get('/logout', [App\Http\Controllers\Admin\Login\LoginController::class, 'adminLogout'])->name('admin.logout');
+
+    //Module 
+    Route::get('module', [\App\Http\Controllers\Admin\Module\ModuleController::class, 'module'])->name('module');
+
+    /*-----------Masters-----------*/
+
+    //State
+    Route::get('state', [\App\Http\Controllers\Admin\Master\StateController::class, 'state'])->name('state');
+
+    //City
+    Route::get('city', [\App\Http\Controllers\Admin\Master\CityController::class, 'city'])->name('city');
+
+    //Main Category
+    Route::get('maincategory', [\App\Http\Controllers\Admin\Master\MainCategoryController::class, 'mainCategory'])->name('maincategory');
+
+    //Category
+    Route::get('category', [\App\Http\Controllers\Admin\Master\CategoryController::class, 'category'])->name('category');
+
+    //SubCategory
+    Route::get('subcategory', [\App\Http\Controllers\Admin\Master\SubCategoryController::class, 'SubCategory'])->name('subcategory');
+
+    //Brands
+    Route::get('brand', [\App\Http\Controllers\Admin\Master\BrandController::class, 'brand'])->name('brand');
+
+    //Products
+    Route::get('product', [\App\Http\Controllers\Admin\Master\ProductController::class, 'product'])->name('product');
+});

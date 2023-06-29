@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Profile;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Traits\Common;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
+class ProfileController extends Controller
+{
+    use Common;
+    function profile()
+    {
+        try {
+            $profiledetails = Auth::user();
+            return view('backend.admin.profile.profile', compact('profiledetails'));
+        } catch (Exception $e) {
+            $this->Log(__FUNCTION__, "GET", $e->getMessage(), Auth::user()->id, request()->ip(), gethostname());
+        }
+    }
+
+    function profileUpdate(Request $request)
+    {
+        $request->validate([
+            'txtUserName' => 'required',
+            'txtMobile' => 'required|numeric|digits:10|unique:users,mobile,' . $request->hdProfileId,
+        ]);
+
+        if ($request->file('fileProfileImage')) {
+            $file = $request->file('fileProfileImage');
+            $extension = $file->getClientOriginalExtension();
+            $fileName = $this->generateRandom(16) . '.' . $extension;
+        }
+
+        User::findorFail($request->hdProfileId)->update([
+            'user_name' => $request->txtUserName,
+            'mobile' => $request->txtMobile,
+            'user_img_path' => ($request->hasFile('fileProfileImage')) ? $this->fileUpload($file, 'upload/users/' . $request->hdProfileId, $fileName) : $request->hdProfileImg,
+            'updated_by' => Auth::user()->id
+        ]);
+
+        if ($request->filled('txtPassword')) {
+            $password = Hash::make($request->txtPassword);
+            User::findorFail($request->hdProfileId)->update([
+                'password' => $password
+            ]);
+        }
+
+
+        $notification = array(
+            'message' => 'Profile Updated Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('profile')->with($notification);
+    }
+}

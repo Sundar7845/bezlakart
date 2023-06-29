@@ -1,0 +1,106 @@
+<?php
+
+namespace App\Http\Controllers\Frontend\Login;
+
+use App\Enums\RolesType;
+use App\Http\Controllers\Controller;
+use App\Models\BusinessSetting;
+use App\Models\User;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Session;
+
+class LoginController extends Controller
+{
+    use Common;
+    public function loginForm()
+    {
+        $businesssettings = $this->BussinessSettingdetails();
+        return view('frontend.auth.login', compact('businesssettings'));
+    }
+
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'txtmobile'   => 'required',
+            'txtpassword' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+        $useremail = User::where('email', $request->txtmobile)->orwhere('mobile', $request->txtmobile)->pluck('email')->first();
+        $usermobile = User::where('email', $request->txtmobile)->orwhere('mobile', $request->txtmobile)->pluck('mobile')->first();
+
+        if ($useremail) {
+            $verifyRole = $this->getRoleId($useremail);
+
+            if ($verifyRole) {
+
+                if (Auth::attempt([
+                    'mobile' => $usermobile,
+                    'password' => $request->txtpassword,
+                    'email' => $useremail
+                ], $request->get('remember'))) {
+
+                    if ($verifyRole == RolesType::Customer) {
+
+                        $notification = array(
+                            'message' => 'Logged in successfully',
+                            'alert-type' => 'success'
+                        );
+                        return redirect()->route('myaccount')->with($notification);
+                    } else {
+
+                        $notification = array(
+                            'message' => 'Invalid credentials!',
+                            'alert-type' => 'error'
+                        );
+                        return redirect()->back()->with($notification);
+                    }
+                } else {
+                    $notification = array(
+                        'message' => 'Invalid credentials!',
+                        'alert-type' => 'error'
+                    );
+                    return redirect()->route('loginform')->with($notification);
+                }
+            } else {
+                $notification = array(
+                    'message' => 'Invalid credentials!',
+                    'alert-type' => 'error'
+                );
+
+                return redirect()->back()->with($notification);
+            }
+        } else {
+            $notification = array(
+                'message' => 'Invalid credentials!',
+                'alert-type' => 'error'
+            );
+
+            return redirect()->back()->with($notification);
+        }
+    }
+
+    private function getRoleId($email)
+    {
+        return User::where('email', $email)->pluck('role_id')->first();
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        Session::flush();
+        $request->session()->invalidate();
+        $notification = array(
+            'message' => 'Logged Out Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('loginform')->with($notification);
+    }
+}

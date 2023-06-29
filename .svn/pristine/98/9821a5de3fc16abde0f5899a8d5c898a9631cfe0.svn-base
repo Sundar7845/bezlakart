@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Master;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class BrandController extends Controller
+{
+    public function brand()
+    {
+        return view('backend.admin.master.brand.brand');
+    }
+}

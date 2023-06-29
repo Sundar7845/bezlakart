@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Http\Controllers\Frontend\Product;
+
+use App\Http\Controllers\Controller;
+use App\Models\Brand;
+use App\Models\MainCategory;
+use App\Models\Products;
+use App\Traits\Common;
+use Illuminate\Http\Request;
+
+class SearchController extends Controller
+{
+    use Common;
+    function autosearch(Request $request)
+    {
+        $products = Products::where('product_name', 'like', '%' . $request->search . '%')->get();
+        $brands = Brand::where('is_active', 1)->get();
+        $maincategorys = MainCategory::where('is_active', 1)->get();
+        return view('frontend.shop.shop', compact('products', 'brands', 'maincategorys'));
+    }
+}

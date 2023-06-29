@@ -1,0 +1,15 @@
+.ri-pencil-line,
+.ri-delete-bin-6-line {
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.icon {
+    font-size: 25px;
+}
+
+.error {
+    color: #ff0002;
+    font-size: 85%;
+    margin-top: 0.25rem;
+}

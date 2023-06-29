@@ -1,0 +1,8 @@
+.ri-pencil-line,
+.ri-delete-bin-6-line {
+    font-size: 25px;
+}
+
+.icon {
+    font-size: 25px;
+}
